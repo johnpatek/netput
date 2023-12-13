@@ -13,4 +13,4 @@ add_library(netput STATIC netput.cpp)
 
 target_include_directories(netput PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
-add_subdirectory(example)
+target_link_libraries(netput grpc++)
