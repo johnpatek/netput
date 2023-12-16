@@ -140,18 +140,8 @@ struct KeyboardEventDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 KeyboardEventDefaultTypeInternal _KeyboardEvent_default_instance_;
-
-inline constexpr EventResponse::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : error_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        success_{false},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR EventResponse::EventResponse(::_pbi::ConstantInitialized)
-    : _impl_(::_pbi::ConstantInitialized()) {}
+      template <typename>
+PROTOBUF_CONSTEXPR EventResponse::EventResponse(::_pbi::ConstantInitialized) {}
 struct EventResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR EventResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~EventResponseDefaultTypeInternal() {}
@@ -162,18 +152,8 @@ struct EventResponseDefaultTypeInternal {
 
 PROTOBUF_ATTRIBUTE_NO_DESTROY PROTOBUF_CONSTINIT
     PROTOBUF_ATTRIBUTE_INIT_PRIORITY1 EventResponseDefaultTypeInternal _EventResponse_default_instance_;
-
-inline constexpr DisconnectResponse::Impl_::Impl_(
-    ::_pbi::ConstantInitialized) noexcept
-      : error_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        success_{false},
-        _cached_size_{0} {}
-
-template <typename>
-PROTOBUF_CONSTEXPR DisconnectResponse::DisconnectResponse(::_pbi::ConstantInitialized)
-    : _impl_(::_pbi::ConstantInitialized()) {}
+      template <typename>
+PROTOBUF_CONSTEXPR DisconnectResponse::DisconnectResponse(::_pbi::ConstantInitialized) {}
 struct DisconnectResponseDefaultTypeInternal {
   PROTOBUF_CONSTEXPR DisconnectResponseDefaultTypeInternal() : _instance(::_pbi::ConstantInitialized{}) {}
   ~DisconnectResponseDefaultTypeInternal() {}
@@ -211,10 +191,6 @@ inline constexpr ConnectResponse::Impl_::Impl_(
       : sessionid_(
             &::google::protobuf::internal::fixed_address_empty_string,
             ::_pbi::ConstantInitialized()),
-        error_(
-            &::google::protobuf::internal::fixed_address_empty_string,
-            ::_pbi::ConstantInitialized()),
-        success_{false},
         _cached_size_{0} {}
 
 template <typename>
@@ -325,9 +301,7 @@ const ::uint32_t TableStruct_netput_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::netput::internal::ConnectResponse, _impl_.success_),
     PROTOBUF_FIELD_OFFSET(::netput::internal::ConnectResponse, _impl_.sessionid_),
-    PROTOBUF_FIELD_OFFSET(::netput::internal::ConnectResponse, _impl_.error_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::netput::internal::DisconnectRequest, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -345,8 +319,6 @@ const ::uint32_t TableStruct_netput_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::netput::internal::DisconnectResponse, _impl_.success_),
-    PROTOBUF_FIELD_OFFSET(::netput::internal::DisconnectResponse, _impl_.error_),
     ~0u,  // no _has_bits_
     PROTOBUF_FIELD_OFFSET(::netput::internal::MouseButtonStateMask, _internal_metadata_),
     ~0u,  // no _extensions_
@@ -461,24 +433,22 @@ const ::uint32_t TableStruct_netput_2eproto::offsets[] PROTOBUF_SECTION_VARIABLE
     ~0u,  // no _inlined_string_donated_
     ~0u,  // no _split_
     ~0u,  // no sizeof(Split)
-    PROTOBUF_FIELD_OFFSET(::netput::internal::EventResponse, _impl_.success_),
-    PROTOBUF_FIELD_OFFSET(::netput::internal::EventResponse, _impl_.error_),
 };
 
 static const ::_pbi::MigrationSchema
     schemas[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
         {0, -1, -1, sizeof(::netput::internal::ConnectRequest)},
         {9, -1, -1, sizeof(::netput::internal::ConnectResponse)},
-        {20, -1, -1, sizeof(::netput::internal::DisconnectRequest)},
-        {29, -1, -1, sizeof(::netput::internal::DisconnectResponse)},
-        {39, -1, -1, sizeof(::netput::internal::MouseButtonStateMask)},
-        {52, 67, -1, sizeof(::netput::internal::MouseMotionEvent)},
-        {74, -1, -1, sizeof(::netput::internal::MouseButtonEvent)},
-        {89, -1, -1, sizeof(::netput::internal::MouseWheelEvent)},
-        {103, -1, -1, sizeof(::netput::internal::KeyboardEvent)},
-        {116, -1, -1, sizeof(::netput::internal::WindowEvent)},
-        {129, -1, -1, sizeof(::netput::internal::EventRequest)},
-        {145, -1, -1, sizeof(::netput::internal::EventResponse)},
+        {18, -1, -1, sizeof(::netput::internal::DisconnectRequest)},
+        {27, -1, -1, sizeof(::netput::internal::DisconnectResponse)},
+        {35, -1, -1, sizeof(::netput::internal::MouseButtonStateMask)},
+        {48, 63, -1, sizeof(::netput::internal::MouseMotionEvent)},
+        {70, -1, -1, sizeof(::netput::internal::MouseButtonEvent)},
+        {85, -1, -1, sizeof(::netput::internal::MouseWheelEvent)},
+        {99, -1, -1, sizeof(::netput::internal::KeyboardEvent)},
+        {112, -1, -1, sizeof(::netput::internal::WindowEvent)},
+        {125, -1, -1, sizeof(::netput::internal::EventRequest)},
+        {141, -1, -1, sizeof(::netput::internal::EventResponse)},
 };
 
 static const ::_pb::Message* const file_default_instances[] = {
@@ -497,70 +467,68 @@ static const ::_pb::Message* const file_default_instances[] = {
 };
 const char descriptor_table_protodef_netput_2eproto[] PROTOBUF_SECTION_VARIABLE(protodesc_cold) = {
     "\n\014netput.proto\022\017netput.internal\"\"\n\016Conne"
-    "ctRequest\022\020\n\010UserData\030\001 \001(\014\"D\n\017ConnectRe"
-    "sponse\022\017\n\007success\030\001 \001(\010\022\021\n\tSessionID\030\002 \001"
-    "(\t\022\r\n\005Error\030\003 \001(\t\"&\n\021DisconnectRequest\022\021"
-    "\n\tSessionID\030\001 \001(\t\"4\n\022DisconnectResponse\022"
-    "\017\n\007Success\030\001 \001(\010\022\r\n\005Error\030\002 \001(\t\"\354\001\n\024Mous"
-    "eButtonStateMask\022)\n\004Left\030\001 \001(\0162\033.netput."
-    "internal.MouseState\022+\n\006Middle\030\002 \001(\0162\033.ne"
-    "tput.internal.MouseState\022*\n\005Right\030\003 \001(\0162"
-    "\033.netput.internal.MouseState\022\'\n\002X1\030\004 \001(\016"
-    "2\033.netput.internal.MouseState\022\'\n\002X2\030\005 \001("
-    "\0162\033.netput.internal.MouseState\"\255\001\n\020Mouse"
-    "MotionEvent\022\021\n\tTimestamp\030\001 \001(\004\022\020\n\010Window"
-    "ID\030\002 \001(\r\0228\n\tStateMask\030\003 \001(\0132%.netput.int"
-    "ernal.MouseButtonStateMask\022\t\n\001X\030\004 \001(\021\022\t\n"
-    "\001Y\030\005 \001(\021\022\021\n\tRelativeX\030\006 \001(\021\022\021\n\tRelativeY"
-    "\030\007 \001(\021\"\274\001\n\020MouseButtonEvent\022\021\n\tTimestamp"
-    "\030\001 \001(\004\022\020\n\010WindowID\030\002 \001(\r\022,\n\006Button\030\003 \001(\016"
-    "2\034.netput.internal.MouseButton\022*\n\005State\030"
-    "\004 \001(\0162\033.netput.internal.MouseState\022\023\n\013Do"
-    "ubleClick\030\005 \001(\010\022\t\n\001X\030\006 \001(\021\022\t\n\001Y\030\007 \001(\021\"p\n"
-    "\017MouseWheelEvent\022\021\n\tTimestamp\030\001 \001(\004\022\020\n\010W"
-    "indowID\030\002 \001(\r\022\t\n\001X\030\003 \001(\021\022\t\n\001Y\030\004 \001(\021\022\020\n\010P"
-    "reciseX\030\005 \001(\002\022\020\n\010PreciceY\030\006 \001(\002\"\177\n\rKeybo"
-    "ardEvent\022\021\n\tTimestamp\030\001 \001(\004\022\020\n\010WindowID\030"
-    "\002 \001(\r\022(\n\005State\030\003 \001(\0162\031.netput.internal.K"
-    "eyState\022\016\n\006Repeat\030\004 \001(\010\022\017\n\007KeyCode\030\005 \001(\r"
-    "\"~\n\013WindowEvent\022\021\n\tTimestamp\030\001 \001(\004\022\020\n\010Wi"
-    "ndowID\030\002 \001(\r\022.\n\004Type\030\003 \001(\0162 .netput.inte"
-    "rnal.WindowEventType\022\014\n\004Arg1\030\004 \001(\021\022\014\n\004Ar"
-    "g2\030\005 \001(\021\"\344\002\n\014EventRequest\022\021\n\tSessionID\030\001"
-    " \001(\t\022(\n\004Type\030\002 \001(\0162\032.netput.internal.Eve"
-    "ntType\0228\n\013MouseMotion\030\003 \001(\0132!.netput.int"
-    "ernal.MouseMotionEventH\000\0228\n\013MouseButton\030"
-    "\004 \001(\0132!.netput.internal.MouseButtonEvent"
-    "H\000\0226\n\nMouseWheel\030\005 \001(\0132 .netput.internal"
-    ".MouseWheelEventH\000\0222\n\010Keyboard\030\006 \001(\0132\036.n"
-    "etput.internal.KeyboardEventH\000\022.\n\006Window"
-    "\030\007 \001(\0132\034.netput.internal.WindowEventH\000B\007"
-    "\n\005Event\"/\n\rEventResponse\022\017\n\007Success\030\001 \001("
-    "\010\022\r\n\005Error\030\002 \001(\t*k\n\tEventType\022\023\n\017MouseMo"
-    "tionType\020\000\022\023\n\017MouseButtonType\020\001\022\022\n\016Mouse"
-    "WheelType\020\002\022\020\n\014KeyboardType\020\003\022\016\n\nWindowT"
-    "ype\020\004*\034\n\010KeyState\022\006\n\002Up\020\000\022\010\n\004Down\020\001*>\n\013M"
-    "ouseButton\022\010\n\004Left\020\000\022\n\n\006Middle\020\001\022\t\n\005Righ"
-    "t\020\002\022\006\n\002X1\020\003\022\006\n\002X2\020\004*$\n\nMouseState\022\t\n\005Pre"
-    "ss\020\000\022\013\n\007Release\020\001*\351\001\n\017WindowEventType\022\r\n"
-    "\tShownType\020\000\022\016\n\nHiddenType\020\001\022\017\n\013ExposedT"
-    "ype\020\002\022\r\n\tMovedType\020\003\022\017\n\013ResizedType\020\004\022\021\n"
-    "\rMinimizedType\020\005\022\021\n\rMaximizedType\020\006\022\020\n\014R"
-    "estoredType\020\007\022\022\n\016MouseEnterType\020\010\022\022\n\016Mou"
-    "seLeaveType\020\t\022\023\n\017FocusGainedType\020\n\022\021\n\rFo"
-    "cusLostType\020\0132\374\001\n\006Netput\022N\n\007Connect\022\037.ne"
-    "tput.internal.ConnectRequest\032 .netput.in"
-    "ternal.ConnectResponse\"\000\022X\n\nDisconnect\022#"
-    ".netput.internal.DisconnectResponse\032#.ne"
-    "tput.internal.DisconnectResponse\"\000\022H\n\005Ev"
-    "ent\022\035.netput.internal.EventRequest\032\036.net"
-    "put.internal.EventResponse\"\000b\006proto3"
+    "ctRequest\022\020\n\010UserData\030\001 \001(\014\"$\n\017ConnectRe"
+    "sponse\022\021\n\tSessionID\030\002 \001(\t\"&\n\021DisconnectR"
+    "equest\022\021\n\tSessionID\030\001 \001(\t\"\024\n\022DisconnectR"
+    "esponse\"\354\001\n\024MouseButtonStateMask\022)\n\004Left"
+    "\030\001 \001(\0162\033.netput.internal.MouseState\022+\n\006M"
+    "iddle\030\002 \001(\0162\033.netput.internal.MouseState"
+    "\022*\n\005Right\030\003 \001(\0162\033.netput.internal.MouseS"
+    "tate\022\'\n\002X1\030\004 \001(\0162\033.netput.internal.Mouse"
+    "State\022\'\n\002X2\030\005 \001(\0162\033.netput.internal.Mous"
+    "eState\"\255\001\n\020MouseMotionEvent\022\021\n\tTimestamp"
+    "\030\001 \001(\004\022\020\n\010WindowID\030\002 \001(\r\0228\n\tStateMask\030\003 "
+    "\001(\0132%.netput.internal.MouseButtonStateMa"
+    "sk\022\t\n\001X\030\004 \001(\021\022\t\n\001Y\030\005 \001(\021\022\021\n\tRelativeX\030\006 "
+    "\001(\021\022\021\n\tRelativeY\030\007 \001(\021\"\274\001\n\020MouseButtonEv"
+    "ent\022\021\n\tTimestamp\030\001 \001(\004\022\020\n\010WindowID\030\002 \001(\r"
+    "\022,\n\006Button\030\003 \001(\0162\034.netput.internal.Mouse"
+    "Button\022*\n\005State\030\004 \001(\0162\033.netput.internal."
+    "MouseState\022\023\n\013DoubleClick\030\005 \001(\010\022\t\n\001X\030\006 \001"
+    "(\021\022\t\n\001Y\030\007 \001(\021\"p\n\017MouseWheelEvent\022\021\n\tTime"
+    "stamp\030\001 \001(\004\022\020\n\010WindowID\030\002 \001(\r\022\t\n\001X\030\003 \001(\021"
+    "\022\t\n\001Y\030\004 \001(\021\022\020\n\010PreciseX\030\005 \001(\002\022\020\n\010Precice"
+    "Y\030\006 \001(\002\"\177\n\rKeyboardEvent\022\021\n\tTimestamp\030\001 "
+    "\001(\004\022\020\n\010WindowID\030\002 \001(\r\022(\n\005State\030\003 \001(\0162\031.n"
+    "etput.internal.KeyState\022\016\n\006Repeat\030\004 \001(\010\022"
+    "\017\n\007KeyCode\030\005 \001(\r\"~\n\013WindowEvent\022\021\n\tTimes"
+    "tamp\030\001 \001(\004\022\020\n\010WindowID\030\002 \001(\r\022.\n\004Type\030\003 \001"
+    "(\0162 .netput.internal.WindowEventType\022\014\n\004"
+    "Arg1\030\004 \001(\021\022\014\n\004Arg2\030\005 \001(\021\"\344\002\n\014EventReques"
+    "t\022\021\n\tSessionID\030\001 \001(\t\022(\n\004Type\030\002 \001(\0162\032.net"
+    "put.internal.EventType\0228\n\013MouseMotion\030\003 "
+    "\001(\0132!.netput.internal.MouseMotionEventH\000"
+    "\0228\n\013MouseButton\030\004 \001(\0132!.netput.internal."
+    "MouseButtonEventH\000\0226\n\nMouseWheel\030\005 \001(\0132 "
+    ".netput.internal.MouseWheelEventH\000\0222\n\010Ke"
+    "yboard\030\006 \001(\0132\036.netput.internal.KeyboardE"
+    "ventH\000\022.\n\006Window\030\007 \001(\0132\034.netput.internal"
+    ".WindowEventH\000B\007\n\005Event\"\017\n\rEventResponse"
+    "*k\n\tEventType\022\023\n\017MouseMotionType\020\000\022\023\n\017Mo"
+    "useButtonType\020\001\022\022\n\016MouseWheelType\020\002\022\020\n\014K"
+    "eyboardType\020\003\022\016\n\nWindowType\020\004*\034\n\010KeyStat"
+    "e\022\006\n\002Up\020\000\022\010\n\004Down\020\001*>\n\013MouseButton\022\010\n\004Le"
+    "ft\020\000\022\n\n\006Middle\020\001\022\t\n\005Right\020\002\022\006\n\002X1\020\003\022\006\n\002X"
+    "2\020\004*$\n\nMouseState\022\t\n\005Press\020\000\022\013\n\007Release\020"
+    "\001*\351\001\n\017WindowEventType\022\r\n\tShownType\020\000\022\016\n\n"
+    "HiddenType\020\001\022\017\n\013ExposedType\020\002\022\r\n\tMovedTy"
+    "pe\020\003\022\017\n\013ResizedType\020\004\022\021\n\rMinimizedType\020\005"
+    "\022\021\n\rMaximizedType\020\006\022\020\n\014RestoredType\020\007\022\022\n"
+    "\016MouseEnterType\020\010\022\022\n\016MouseLeaveType\020\t\022\023\n"
+    "\017FocusGainedType\020\n\022\021\n\rFocusLostType\020\0132\373\001"
+    "\n\006Netput\022N\n\007Connect\022\037.netput.internal.Co"
+    "nnectRequest\032 .netput.internal.ConnectRe"
+    "sponse\"\000\022W\n\nDisconnect\022\".netput.internal"
+    ".DisconnectRequest\032#.netput.internal.Dis"
+    "connectResponse\"\000\022H\n\005Event\022\035.netput.inte"
+    "rnal.EventRequest\032\036.netput.internal.Even"
+    "tResponse\"\000b\006proto3"
 };
 static ::absl::once_flag descriptor_table_netput_2eproto_once;
 const ::_pbi::DescriptorTable descriptor_table_netput_2eproto = {
     false,
     false,
-    2356,
+    2259,
     descriptor_table_protodef_netput_2eproto,
     "netput.proto",
     &descriptor_table_netput_2eproto_once,
@@ -839,7 +807,6 @@ inline PROTOBUF_NDEBUG_INLINE ConnectResponse::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
     const Impl_& from)
       : sessionid_(arena, from.sessionid_),
-        error_(arena, from.error_),
         _cached_size_{0} {}
 
 ConnectResponse::ConnectResponse(
@@ -851,7 +818,6 @@ ConnectResponse::ConnectResponse(
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
   new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
-  _impl_.success_ = from._impl_.success_;
 
   // @@protoc_insertion_point(copy_constructor:netput.internal.ConnectResponse)
 }
@@ -859,12 +825,10 @@ inline PROTOBUF_NDEBUG_INLINE ConnectResponse::Impl_::Impl_(
     ::google::protobuf::internal::InternalVisibility visibility,
     ::google::protobuf::Arena* arena)
       : sessionid_(arena),
-        error_(arena),
         _cached_size_{0} {}
 
 inline void ConnectResponse::SharedCtor(::_pb::Arena* arena) {
   new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.success_ = {};
 }
 ConnectResponse::~ConnectResponse() {
   // @@protoc_insertion_point(destructor:netput.internal.ConnectResponse)
@@ -874,7 +838,6 @@ ConnectResponse::~ConnectResponse() {
 inline void ConnectResponse::SharedDtor() {
   ABSL_DCHECK(GetArena() == nullptr);
   _impl_.sessionid_.Destroy();
-  _impl_.error_.Destroy();
   _impl_.~Impl_();
 }
 
@@ -886,8 +849,6 @@ PROTOBUF_NOINLINE void ConnectResponse::Clear() {
   (void) cached_has_bits;
 
   _impl_.sessionid_.ClearToEmpty();
-  _impl_.error_.ClearToEmpty();
-  _impl_.success_ = false;
   _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
 }
 
@@ -899,49 +860,35 @@ const char* ConnectResponse::_InternalParse(
 
 
 PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<2, 3, 0, 54, 2> ConnectResponse::_table_ = {
+const ::_pbi::TcParseTable<0, 1, 0, 49, 2> ConnectResponse::_table_ = {
   {
     0,  // no _has_bits_
     0, // no _extensions_
-    3, 24,  // max_field_number, fast_idx_mask
+    2, 0,  // max_field_number, fast_idx_mask
     offsetof(decltype(_table_), field_lookup_table),
-    4294967288,  // skipmap
+    4294967293,  // skipmap
     offsetof(decltype(_table_), field_entries),
-    3,  // num_field_entries
+    1,  // num_field_entries
     0,  // num_aux_entries
     offsetof(decltype(_table_), field_names),  // no aux_entries
     &_ConnectResponse_default_instance_._instance,
     ::_pbi::TcParser::GenericFallback,  // fallback
   }, {{
-    {::_pbi::TcParser::MiniParse, {}},
-    // bool success = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(ConnectResponse, _impl_.success_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(ConnectResponse, _impl_.success_)}},
     // string SessionID = 2;
     {::_pbi::TcParser::FastUS1,
      {18, 63, 0, PROTOBUF_FIELD_OFFSET(ConnectResponse, _impl_.sessionid_)}},
-    // string Error = 3;
-    {::_pbi::TcParser::FastUS1,
-     {26, 63, 0, PROTOBUF_FIELD_OFFSET(ConnectResponse, _impl_.error_)}},
   }}, {{
     65535, 65535
   }}, {{
-    // bool success = 1;
-    {PROTOBUF_FIELD_OFFSET(ConnectResponse, _impl_.success_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
     // string SessionID = 2;
     {PROTOBUF_FIELD_OFFSET(ConnectResponse, _impl_.sessionid_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-    // string Error = 3;
-    {PROTOBUF_FIELD_OFFSET(ConnectResponse, _impl_.error_), 0, 0,
     (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
   }},
   // no aux_entries
   {{
-    "\37\0\11\5\0\0\0\0"
+    "\37\11\0\0\0\0\0\0"
     "netput.internal.ConnectResponse"
     "SessionID"
-    "Error"
   }},
 };
 
@@ -952,27 +899,12 @@ const ::_pbi::TcParseTable<2, 3, 0, 54, 2> ConnectResponse::_table_ = {
   ::uint32_t cached_has_bits = 0;
   (void)cached_has_bits;
 
-  // bool success = 1;
-  if (this->_internal_success() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(
-        1, this->_internal_success(), target);
-  }
-
   // string SessionID = 2;
   if (!this->_internal_sessionid().empty()) {
     const std::string& _s = this->_internal_sessionid();
     ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
         _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "netput.internal.ConnectResponse.SessionID");
     target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
-
-  // string Error = 3;
-  if (!this->_internal_error().empty()) {
-    const std::string& _s = this->_internal_error();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "netput.internal.ConnectResponse.Error");
-    target = stream->WriteStringMaybeAliased(3, _s, target);
   }
 
   if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
@@ -998,17 +930,6 @@ const ::_pbi::TcParseTable<2, 3, 0, 54, 2> ConnectResponse::_table_ = {
                                     this->_internal_sessionid());
   }
 
-  // string Error = 3;
-  if (!this->_internal_error().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_error());
-  }
-
-  // bool success = 1;
-  if (this->_internal_success() != 0) {
-    total_size += 2;
-  }
-
   return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
 }
 
@@ -1030,12 +951,6 @@ void ConnectResponse::MergeImpl(::google::protobuf::Message& to_msg, const ::goo
 
   if (!from._internal_sessionid().empty()) {
     _this->_internal_set_sessionid(from._internal_sessionid());
-  }
-  if (!from._internal_error().empty()) {
-    _this->_internal_set_error(from._internal_error());
-  }
-  if (from._internal_success() != 0) {
-    _this->_internal_set_success(from._internal_success());
   }
   _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
 }
@@ -1060,8 +975,6 @@ void ConnectResponse::InternalSwap(ConnectResponse* PROTOBUF_RESTRICT other) {
   ABSL_DCHECK_EQ(arena, other->GetArena());
   _internal_metadata_.InternalSwap(&other->_internal_metadata_);
   ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.sessionid_, &other->_impl_.sessionid_, arena);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_, &other->_impl_.error_, arena);
-        swap(_impl_.success_, other->_impl_.success_);
 }
 
 ::google::protobuf::Metadata ConnectResponse::GetMetadata() const {
@@ -1266,208 +1179,28 @@ class DisconnectResponse::_Internal {
 };
 
 DisconnectResponse::DisconnectResponse(::google::protobuf::Arena* arena)
-    : ::google::protobuf::Message(arena) {
-  SharedCtor(arena);
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:netput.internal.DisconnectResponse)
 }
-inline PROTOBUF_NDEBUG_INLINE DisconnectResponse::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from)
-      : error_(arena, from.error_),
-        _cached_size_{0} {}
-
 DisconnectResponse::DisconnectResponse(
     ::google::protobuf::Arena* arena,
     const DisconnectResponse& from)
-    : ::google::protobuf::Message(arena) {
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
   DisconnectResponse* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
-  _impl_.success_ = from._impl_.success_;
 
   // @@protoc_insertion_point(copy_constructor:netput.internal.DisconnectResponse)
 }
-inline PROTOBUF_NDEBUG_INLINE DisconnectResponse::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : error_(arena),
-        _cached_size_{0} {}
-
-inline void DisconnectResponse::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.success_ = {};
-}
-DisconnectResponse::~DisconnectResponse() {
-  // @@protoc_insertion_point(destructor:netput.internal.DisconnectResponse)
-  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  SharedDtor();
-}
-inline void DisconnectResponse::SharedDtor() {
-  ABSL_DCHECK(GetArena() == nullptr);
-  _impl_.error_.Destroy();
-  _impl_.~Impl_();
-}
-
-PROTOBUF_NOINLINE void DisconnectResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:netput.internal.DisconnectResponse)
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.error_.ClearToEmpty();
-  _impl_.success_ = false;
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-const char* DisconnectResponse::_InternalParse(
-    const char* ptr, ::_pbi::ParseContext* ctx) {
-  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
-  return ptr;
-}
 
 
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 48, 2> DisconnectResponse::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    &_DisconnectResponse_default_instance_._instance,
-    ::_pbi::TcParser::GenericFallback,  // fallback
-  }, {{
-    // string Error = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(DisconnectResponse, _impl_.error_)}},
-    // bool Success = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(DisconnectResponse, _impl_.success_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(DisconnectResponse, _impl_.success_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // bool Success = 1;
-    {PROTOBUF_FIELD_OFFSET(DisconnectResponse, _impl_.success_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
-    // string Error = 2;
-    {PROTOBUF_FIELD_OFFSET(DisconnectResponse, _impl_.error_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\42\0\5\0\0\0\0\0"
-    "netput.internal.DisconnectResponse"
-    "Error"
-  }},
-};
 
-::uint8_t* DisconnectResponse::_InternalSerialize(
-    ::uint8_t* target,
-    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:netput.internal.DisconnectResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
 
-  // bool Success = 1;
-  if (this->_internal_success() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(
-        1, this->_internal_success(), target);
-  }
 
-  // string Error = 2;
-  if (!this->_internal_error().empty()) {
-    const std::string& _s = this->_internal_error();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "netput.internal.DisconnectResponse.Error");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
 
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:netput.internal.DisconnectResponse)
-  return target;
-}
 
-::size_t DisconnectResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:netput.internal.DisconnectResponse)
-  ::size_t total_size = 0;
 
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string Error = 2;
-  if (!this->_internal_error().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_error());
-  }
-
-  // bool Success = 1;
-  if (this->_internal_success() != 0) {
-    total_size += 2;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::google::protobuf::Message::ClassData DisconnectResponse::_class_data_ = {
-    DisconnectResponse::MergeImpl,
-    nullptr,  // OnDemandRegisterArenaDtor
-};
-const ::google::protobuf::Message::ClassData* DisconnectResponse::GetClassData() const {
-  return &_class_data_;
-}
-
-void DisconnectResponse::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
-  auto* const _this = static_cast<DisconnectResponse*>(&to_msg);
-  auto& from = static_cast<const DisconnectResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:netput.internal.DisconnectResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_error().empty()) {
-    _this->_internal_set_error(from._internal_error());
-  }
-  if (from._internal_success() != 0) {
-    _this->_internal_set_success(from._internal_success());
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void DisconnectResponse::CopyFrom(const DisconnectResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:netput.internal.DisconnectResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-PROTOBUF_NOINLINE bool DisconnectResponse::IsInitialized() const {
-  return true;
-}
-
-::_pbi::CachedSize* DisconnectResponse::AccessCachedSize() const {
-  return &_impl_._cached_size_;
-}
-void DisconnectResponse::InternalSwap(DisconnectResponse* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_, &other->_impl_.error_, arena);
-        swap(_impl_.success_, other->_impl_.success_);
-}
 
 ::google::protobuf::Metadata DisconnectResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(
@@ -3787,208 +3520,28 @@ class EventResponse::_Internal {
 };
 
 EventResponse::EventResponse(::google::protobuf::Arena* arena)
-    : ::google::protobuf::Message(arena) {
-  SharedCtor(arena);
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
   // @@protoc_insertion_point(arena_constructor:netput.internal.EventResponse)
 }
-inline PROTOBUF_NDEBUG_INLINE EventResponse::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility, ::google::protobuf::Arena* arena,
-    const Impl_& from)
-      : error_(arena, from.error_),
-        _cached_size_{0} {}
-
 EventResponse::EventResponse(
     ::google::protobuf::Arena* arena,
     const EventResponse& from)
-    : ::google::protobuf::Message(arena) {
+    : ::google::protobuf::internal::ZeroFieldsBase(arena) {
   EventResponse* const _this = this;
   (void)_this;
   _internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(
       from._internal_metadata_);
-  new (&_impl_) Impl_(internal_visibility(), arena, from._impl_);
-  _impl_.success_ = from._impl_.success_;
 
   // @@protoc_insertion_point(copy_constructor:netput.internal.EventResponse)
 }
-inline PROTOBUF_NDEBUG_INLINE EventResponse::Impl_::Impl_(
-    ::google::protobuf::internal::InternalVisibility visibility,
-    ::google::protobuf::Arena* arena)
-      : error_(arena),
-        _cached_size_{0} {}
-
-inline void EventResponse::SharedCtor(::_pb::Arena* arena) {
-  new (&_impl_) Impl_(internal_visibility(), arena);
-  _impl_.success_ = {};
-}
-EventResponse::~EventResponse() {
-  // @@protoc_insertion_point(destructor:netput.internal.EventResponse)
-  _internal_metadata_.Delete<::google::protobuf::UnknownFieldSet>();
-  SharedDtor();
-}
-inline void EventResponse::SharedDtor() {
-  ABSL_DCHECK(GetArena() == nullptr);
-  _impl_.error_.Destroy();
-  _impl_.~Impl_();
-}
-
-PROTOBUF_NOINLINE void EventResponse::Clear() {
-// @@protoc_insertion_point(message_clear_start:netput.internal.EventResponse)
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  _impl_.error_.ClearToEmpty();
-  _impl_.success_ = false;
-  _internal_metadata_.Clear<::google::protobuf::UnknownFieldSet>();
-}
-
-const char* EventResponse::_InternalParse(
-    const char* ptr, ::_pbi::ParseContext* ctx) {
-  ptr = ::_pbi::TcParser::ParseLoop(this, ptr, ctx, &_table_.header);
-  return ptr;
-}
 
 
-PROTOBUF_CONSTINIT PROTOBUF_ATTRIBUTE_INIT_PRIORITY1
-const ::_pbi::TcParseTable<1, 2, 0, 43, 2> EventResponse::_table_ = {
-  {
-    0,  // no _has_bits_
-    0, // no _extensions_
-    2, 8,  // max_field_number, fast_idx_mask
-    offsetof(decltype(_table_), field_lookup_table),
-    4294967292,  // skipmap
-    offsetof(decltype(_table_), field_entries),
-    2,  // num_field_entries
-    0,  // num_aux_entries
-    offsetof(decltype(_table_), field_names),  // no aux_entries
-    &_EventResponse_default_instance_._instance,
-    ::_pbi::TcParser::GenericFallback,  // fallback
-  }, {{
-    // string Error = 2;
-    {::_pbi::TcParser::FastUS1,
-     {18, 63, 0, PROTOBUF_FIELD_OFFSET(EventResponse, _impl_.error_)}},
-    // bool Success = 1;
-    {::_pbi::TcParser::SingularVarintNoZag1<bool, offsetof(EventResponse, _impl_.success_), 63>(),
-     {8, 63, 0, PROTOBUF_FIELD_OFFSET(EventResponse, _impl_.success_)}},
-  }}, {{
-    65535, 65535
-  }}, {{
-    // bool Success = 1;
-    {PROTOBUF_FIELD_OFFSET(EventResponse, _impl_.success_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kBool)},
-    // string Error = 2;
-    {PROTOBUF_FIELD_OFFSET(EventResponse, _impl_.error_), 0, 0,
-    (0 | ::_fl::kFcSingular | ::_fl::kUtf8String | ::_fl::kRepAString)},
-  }},
-  // no aux_entries
-  {{
-    "\35\0\5\0\0\0\0\0"
-    "netput.internal.EventResponse"
-    "Error"
-  }},
-};
 
-::uint8_t* EventResponse::_InternalSerialize(
-    ::uint8_t* target,
-    ::google::protobuf::io::EpsCopyOutputStream* stream) const {
-  // @@protoc_insertion_point(serialize_to_array_start:netput.internal.EventResponse)
-  ::uint32_t cached_has_bits = 0;
-  (void)cached_has_bits;
 
-  // bool Success = 1;
-  if (this->_internal_success() != 0) {
-    target = stream->EnsureSpace(target);
-    target = ::_pbi::WireFormatLite::WriteBoolToArray(
-        1, this->_internal_success(), target);
-  }
 
-  // string Error = 2;
-  if (!this->_internal_error().empty()) {
-    const std::string& _s = this->_internal_error();
-    ::google::protobuf::internal::WireFormatLite::VerifyUtf8String(
-        _s.data(), static_cast<int>(_s.length()), ::google::protobuf::internal::WireFormatLite::SERIALIZE, "netput.internal.EventResponse.Error");
-    target = stream->WriteStringMaybeAliased(2, _s, target);
-  }
 
-  if (PROTOBUF_PREDICT_FALSE(_internal_metadata_.have_unknown_fields())) {
-    target =
-        ::_pbi::WireFormat::InternalSerializeUnknownFieldsToArray(
-            _internal_metadata_.unknown_fields<::google::protobuf::UnknownFieldSet>(::google::protobuf::UnknownFieldSet::default_instance), target, stream);
-  }
-  // @@protoc_insertion_point(serialize_to_array_end:netput.internal.EventResponse)
-  return target;
-}
 
-::size_t EventResponse::ByteSizeLong() const {
-// @@protoc_insertion_point(message_byte_size_start:netput.internal.EventResponse)
-  ::size_t total_size = 0;
 
-  ::uint32_t cached_has_bits = 0;
-  // Prevent compiler warnings about cached_has_bits being unused
-  (void) cached_has_bits;
-
-  // string Error = 2;
-  if (!this->_internal_error().empty()) {
-    total_size += 1 + ::google::protobuf::internal::WireFormatLite::StringSize(
-                                    this->_internal_error());
-  }
-
-  // bool Success = 1;
-  if (this->_internal_success() != 0) {
-    total_size += 2;
-  }
-
-  return MaybeComputeUnknownFieldsSize(total_size, &_impl_._cached_size_);
-}
-
-const ::google::protobuf::Message::ClassData EventResponse::_class_data_ = {
-    EventResponse::MergeImpl,
-    nullptr,  // OnDemandRegisterArenaDtor
-};
-const ::google::protobuf::Message::ClassData* EventResponse::GetClassData() const {
-  return &_class_data_;
-}
-
-void EventResponse::MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg) {
-  auto* const _this = static_cast<EventResponse*>(&to_msg);
-  auto& from = static_cast<const EventResponse&>(from_msg);
-  // @@protoc_insertion_point(class_specific_merge_from_start:netput.internal.EventResponse)
-  ABSL_DCHECK_NE(&from, _this);
-  ::uint32_t cached_has_bits = 0;
-  (void) cached_has_bits;
-
-  if (!from._internal_error().empty()) {
-    _this->_internal_set_error(from._internal_error());
-  }
-  if (from._internal_success() != 0) {
-    _this->_internal_set_success(from._internal_success());
-  }
-  _this->_internal_metadata_.MergeFrom<::google::protobuf::UnknownFieldSet>(from._internal_metadata_);
-}
-
-void EventResponse::CopyFrom(const EventResponse& from) {
-// @@protoc_insertion_point(class_specific_copy_from_start:netput.internal.EventResponse)
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-PROTOBUF_NOINLINE bool EventResponse::IsInitialized() const {
-  return true;
-}
-
-::_pbi::CachedSize* EventResponse::AccessCachedSize() const {
-  return &_impl_._cached_size_;
-}
-void EventResponse::InternalSwap(EventResponse* PROTOBUF_RESTRICT other) {
-  using std::swap;
-  auto* arena = GetArena();
-  ABSL_DCHECK_EQ(arena, other->GetArena());
-  _internal_metadata_.InternalSwap(&other->_internal_metadata_);
-  ::_pbi::ArenaStringPtr::InternalSwap(&_impl_.error_, &other->_impl_.error_, arena);
-        swap(_impl_.success_, other->_impl_.success_);
-}
 
 ::google::protobuf::Metadata EventResponse::GetMetadata() const {
   return ::_pbi::AssignDescriptors(

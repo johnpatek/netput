@@ -43,11 +43,11 @@ class Netput final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::ConnectResponse>> PrepareAsyncConnect(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::ConnectResponse>>(PrepareAsyncConnectRaw(context, request, cq));
     }
-    virtual ::grpc::Status Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::netput::internal::DisconnectResponse* response) = 0;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>> AsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) {
+    virtual ::grpc::Status Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::netput::internal::DisconnectResponse* response) = 0;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>> AsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>>(AsyncDisconnectRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>> PrepareAsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>> PrepareAsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>>(PrepareAsyncDisconnectRaw(context, request, cq));
     }
     virtual ::grpc::Status Event(::grpc::ClientContext* context, const ::netput::internal::EventRequest& request, ::netput::internal::EventResponse* response) = 0;
@@ -62,8 +62,8 @@ class Netput final {
       virtual ~async_interface() {}
       virtual void Connect(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest* request, ::netput::internal::ConnectResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Connect(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest* request, ::netput::internal::ConnectResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
-      virtual void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response, std::function<void(::grpc::Status)>) = 0;
-      virtual void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
+      virtual void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response, std::function<void(::grpc::Status)>) = 0;
+      virtual void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
       virtual void Event(::grpc::ClientContext* context, const ::netput::internal::EventRequest* request, ::netput::internal::EventResponse* response, std::function<void(::grpc::Status)>) = 0;
       virtual void Event(::grpc::ClientContext* context, const ::netput::internal::EventRequest* request, ::netput::internal::EventResponse* response, ::grpc::ClientUnaryReactor* reactor) = 0;
     };
@@ -73,8 +73,8 @@ class Netput final {
    private:
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::ConnectResponse>* AsyncConnectRaw(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::ConnectResponse>* PrepareAsyncConnectRaw(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>* AsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) = 0;
-    virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>* PrepareAsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>* AsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) = 0;
+    virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::DisconnectResponse>* PrepareAsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::EventResponse>* AsyncEventRaw(::grpc::ClientContext* context, const ::netput::internal::EventRequest& request, ::grpc::CompletionQueue* cq) = 0;
     virtual ::grpc::ClientAsyncResponseReaderInterface< ::netput::internal::EventResponse>* PrepareAsyncEventRaw(::grpc::ClientContext* context, const ::netput::internal::EventRequest& request, ::grpc::CompletionQueue* cq) = 0;
   };
@@ -88,11 +88,11 @@ class Netput final {
     std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::ConnectResponse>> PrepareAsyncConnect(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::ConnectResponse>>(PrepareAsyncConnectRaw(context, request, cq));
     }
-    ::grpc::Status Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::netput::internal::DisconnectResponse* response) override;
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>> AsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) {
+    ::grpc::Status Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::netput::internal::DisconnectResponse* response) override;
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>> AsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>>(AsyncDisconnectRaw(context, request, cq));
     }
-    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>> PrepareAsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) {
+    std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>> PrepareAsyncDisconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) {
       return std::unique_ptr< ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>>(PrepareAsyncDisconnectRaw(context, request, cq));
     }
     ::grpc::Status Event(::grpc::ClientContext* context, const ::netput::internal::EventRequest& request, ::netput::internal::EventResponse* response) override;
@@ -107,8 +107,8 @@ class Netput final {
      public:
       void Connect(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest* request, ::netput::internal::ConnectResponse* response, std::function<void(::grpc::Status)>) override;
       void Connect(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest* request, ::netput::internal::ConnectResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
-      void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response, std::function<void(::grpc::Status)>) override;
-      void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
+      void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response, std::function<void(::grpc::Status)>) override;
+      void Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
       void Event(::grpc::ClientContext* context, const ::netput::internal::EventRequest* request, ::netput::internal::EventResponse* response, std::function<void(::grpc::Status)>) override;
       void Event(::grpc::ClientContext* context, const ::netput::internal::EventRequest* request, ::netput::internal::EventResponse* response, ::grpc::ClientUnaryReactor* reactor) override;
      private:
@@ -124,8 +124,8 @@ class Netput final {
     class async async_stub_{this};
     ::grpc::ClientAsyncResponseReader< ::netput::internal::ConnectResponse>* AsyncConnectRaw(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::netput::internal::ConnectResponse>* PrepareAsyncConnectRaw(::grpc::ClientContext* context, const ::netput::internal::ConnectRequest& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* AsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) override;
-    ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* PrepareAsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* AsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) override;
+    ::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* PrepareAsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::netput::internal::EventResponse>* AsyncEventRaw(::grpc::ClientContext* context, const ::netput::internal::EventRequest& request, ::grpc::CompletionQueue* cq) override;
     ::grpc::ClientAsyncResponseReader< ::netput::internal::EventResponse>* PrepareAsyncEventRaw(::grpc::ClientContext* context, const ::netput::internal::EventRequest& request, ::grpc::CompletionQueue* cq) override;
     const ::grpc::internal::RpcMethod rpcmethod_Connect_;
@@ -139,7 +139,7 @@ class Netput final {
     Service();
     virtual ~Service();
     virtual ::grpc::Status Connect(::grpc::ServerContext* context, const ::netput::internal::ConnectRequest* request, ::netput::internal::ConnectResponse* response);
-    virtual ::grpc::Status Disconnect(::grpc::ServerContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response);
+    virtual ::grpc::Status Disconnect(::grpc::ServerContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response);
     virtual ::grpc::Status Event(::grpc::ServerContext* context, const ::netput::internal::EventRequest* request, ::netput::internal::EventResponse* response);
   };
   template <class BaseClass>
@@ -174,11 +174,11 @@ class Netput final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
+    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
-    void RequestDisconnect(::grpc::ServerContext* context, ::netput::internal::DisconnectResponse* request, ::grpc::ServerAsyncResponseWriter< ::netput::internal::DisconnectResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
+    void RequestDisconnect(::grpc::ServerContext* context, ::netput::internal::DisconnectRequest* request, ::grpc::ServerAsyncResponseWriter< ::netput::internal::DisconnectResponse>* response, ::grpc::CompletionQueue* new_call_cq, ::grpc::ServerCompletionQueue* notification_cq, void *tag) {
       ::grpc::Service::RequestAsyncUnary(1, context, request, response, new_call_cq, notification_cq, tag);
     }
   };
@@ -237,25 +237,25 @@ class Netput final {
    public:
     WithCallbackMethod_Disconnect() {
       ::grpc::Service::MarkMethodCallback(1,
-          new ::grpc::internal::CallbackUnaryHandler< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse>(
+          new ::grpc::internal::CallbackUnaryHandler< ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse>(
             [this](
-                   ::grpc::CallbackServerContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response) { return this->Disconnect(context, request, response); }));}
+                   ::grpc::CallbackServerContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response) { return this->Disconnect(context, request, response); }));}
     void SetMessageAllocatorFor_Disconnect(
-        ::grpc::MessageAllocator< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse>* allocator) {
+        ::grpc::MessageAllocator< ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse>* allocator) {
       ::grpc::internal::MethodHandler* const handler = ::grpc::Service::GetHandler(1);
-      static_cast<::grpc::internal::CallbackUnaryHandler< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse>*>(handler)
+      static_cast<::grpc::internal::CallbackUnaryHandler< ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse>*>(handler)
               ->SetMessageAllocator(allocator);
     }
     ~WithCallbackMethod_Disconnect() override {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
+    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     virtual ::grpc::ServerUnaryReactor* Disconnect(
-      ::grpc::CallbackServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/)  { return nullptr; }
+      ::grpc::CallbackServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/)  { return nullptr; }
   };
   template <class BaseClass>
   class WithCallbackMethod_Event : public BaseClass {
@@ -315,7 +315,7 @@ class Netput final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
+    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -369,7 +369,7 @@ class Netput final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
+    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -434,7 +434,7 @@ class Netput final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable synchronous version of this method
-    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
+    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
@@ -498,10 +498,10 @@ class Netput final {
     WithStreamedUnaryMethod_Disconnect() {
       ::grpc::Service::MarkMethodStreamed(1,
         new ::grpc::internal::StreamedUnaryHandler<
-          ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse>(
+          ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse>(
             [this](::grpc::ServerContext* context,
                    ::grpc::ServerUnaryStreamer<
-                     ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse>* streamer) {
+                     ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse>* streamer) {
                        return this->StreamedDisconnect(context,
                          streamer);
                   }));
@@ -510,12 +510,12 @@ class Netput final {
       BaseClassMustBeDerivedFromService(this);
     }
     // disable regular version of this method
-    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectResponse* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
+    ::grpc::Status Disconnect(::grpc::ServerContext* /*context*/, const ::netput::internal::DisconnectRequest* /*request*/, ::netput::internal::DisconnectResponse* /*response*/) override {
       abort();
       return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
     }
     // replace default version of method with streamed unary
-    virtual ::grpc::Status StreamedDisconnect(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::netput::internal::DisconnectResponse,::netput::internal::DisconnectResponse>* server_unary_streamer) = 0;
+    virtual ::grpc::Status StreamedDisconnect(::grpc::ServerContext* context, ::grpc::ServerUnaryStreamer< ::netput::internal::DisconnectRequest,::netput::internal::DisconnectResponse>* server_unary_streamer) = 0;
   };
   template <class BaseClass>
   class WithStreamedUnaryMethod_Event : public BaseClass {

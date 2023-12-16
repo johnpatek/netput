@@ -1,3 +1,6 @@
 [submodule "grpc"]
 	path = grpc
 	url = https://github.com/grpc/grpc
+[submodule "uuid_v4"]
+	path = uuid_v4
+	url = https://github.com/crashoz/uuid_v4

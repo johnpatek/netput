@@ -4,7 +4,7 @@ package netput.internal;
 
 service Netput {
     rpc Connect(ConnectRequest) returns (ConnectResponse) {}
-    rpc Disconnect(DisconnectResponse) returns (DisconnectResponse) {}
+    rpc Disconnect(DisconnectRequest) returns (DisconnectResponse) {}
     rpc Event(EventRequest) returns (EventResponse) {}
 }
 
@@ -13,9 +13,7 @@ message ConnectRequest {
 }
 
 message ConnectResponse {
-    bool success = 1;
     string SessionID = 2;
-    string Error = 3;
 }
 
 message DisconnectRequest {
@@ -23,8 +21,6 @@ message DisconnectRequest {
 }
 
 message DisconnectResponse {
-    bool Success = 1;
-    string Error = 2;
 }
 
 enum EventType {
@@ -134,6 +130,4 @@ message EventRequest {
 }
 
 message EventResponse {
-    bool Success = 1;
-    string Error = 2;
 }

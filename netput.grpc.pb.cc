@@ -63,23 +63,23 @@ void Netput::Stub::async::Connect(::grpc::ClientContext* context, const ::netput
   return result;
 }
 
-::grpc::Status Netput::Stub::Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::netput::internal::DisconnectResponse* response) {
-  return ::grpc::internal::BlockingUnaryCall< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Disconnect_, context, request, response);
+::grpc::Status Netput::Stub::Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::netput::internal::DisconnectResponse* response) {
+  return ::grpc::internal::BlockingUnaryCall< ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), rpcmethod_Disconnect_, context, request, response);
 }
 
-void Netput::Stub::async::Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response, std::function<void(::grpc::Status)> f) {
-  ::grpc::internal::CallbackUnaryCall< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Disconnect_, context, request, response, std::move(f));
+void Netput::Stub::async::Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response, std::function<void(::grpc::Status)> f) {
+  ::grpc::internal::CallbackUnaryCall< ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Disconnect_, context, request, response, std::move(f));
 }
 
-void Netput::Stub::async::Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response, ::grpc::ClientUnaryReactor* reactor) {
+void Netput::Stub::async::Disconnect(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response, ::grpc::ClientUnaryReactor* reactor) {
   ::grpc::internal::ClientCallbackUnaryFactory::Create< ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(stub_->channel_.get(), stub_->rpcmethod_Disconnect_, context, request, response, reactor);
 }
 
-::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* Netput::Stub::PrepareAsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) {
-  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Disconnect_, context, request);
+::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* Netput::Stub::PrepareAsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) {
+  return ::grpc::internal::ClientAsyncResponseReaderHelper::Create< ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectRequest, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(channel_.get(), cq, rpcmethod_Disconnect_, context, request);
 }
 
-::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* Netput::Stub::AsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectResponse& request, ::grpc::CompletionQueue* cq) {
+::grpc::ClientAsyncResponseReader< ::netput::internal::DisconnectResponse>* Netput::Stub::AsyncDisconnectRaw(::grpc::ClientContext* context, const ::netput::internal::DisconnectRequest& request, ::grpc::CompletionQueue* cq) {
   auto* result =
     this->PrepareAsyncDisconnectRaw(context, request, cq);
   result->StartCall();
@@ -123,10 +123,10 @@ Netput::Service::Service() {
   AddMethod(new ::grpc::internal::RpcServiceMethod(
       Netput_method_names[1],
       ::grpc::internal::RpcMethod::NORMAL_RPC,
-      new ::grpc::internal::RpcMethodHandler< Netput::Service, ::netput::internal::DisconnectResponse, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
+      new ::grpc::internal::RpcMethodHandler< Netput::Service, ::netput::internal::DisconnectRequest, ::netput::internal::DisconnectResponse, ::grpc::protobuf::MessageLite, ::grpc::protobuf::MessageLite>(
           [](Netput::Service* service,
              ::grpc::ServerContext* ctx,
-             const ::netput::internal::DisconnectResponse* req,
+             const ::netput::internal::DisconnectRequest* req,
              ::netput::internal::DisconnectResponse* resp) {
                return service->Disconnect(ctx, req, resp);
              }, this)));
@@ -152,7 +152,7 @@ Netput::Service::~Service() {
   return ::grpc::Status(::grpc::StatusCode::UNIMPLEMENTED, "");
 }
 
-::grpc::Status Netput::Service::Disconnect(::grpc::ServerContext* context, const ::netput::internal::DisconnectResponse* request, ::netput::internal::DisconnectResponse* response) {
+::grpc::Status Netput::Service::Disconnect(::grpc::ServerContext* context, const ::netput::internal::DisconnectRequest* request, ::netput::internal::DisconnectResponse* response) {
   (void) context;
   (void) request;
   (void) response;

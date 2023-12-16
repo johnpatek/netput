@@ -26,6 +26,7 @@
 #include "google/protobuf/io/coded_stream.h"
 #include "google/protobuf/arena.h"
 #include "google/protobuf/arenastring.h"
+#include "google/protobuf/generated_message_bases.h"
 #include "google/protobuf/generated_message_tctable_decl.h"
 #include "google/protobuf/generated_message_util.h"
 #include "google/protobuf/metadata_lite.h"
@@ -1442,10 +1443,9 @@ class KeyboardEvent final :
 };// -------------------------------------------------------------------
 
 class EventResponse final :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:netput.internal.EventResponse) */ {
+    public ::google::protobuf::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:netput.internal.EventResponse) */ {
  public:
   inline EventResponse() : EventResponse(nullptr) {}
-  ~EventResponse() override;
   template<typename = void>
   explicit PROTOBUF_CONSTEXPR EventResponse(::google::protobuf::internal::ConstantInitialized);
 
@@ -1529,29 +1529,15 @@ class EventResponse final :
   EventResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<EventResponse>(arena);
   }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const EventResponse& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom( const EventResponse& from) {
-    EventResponse::MergeImpl(*this, from);
+  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const EventResponse& from) {
+    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
   }
-  private:
-  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const EventResponse& from) {
+    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
   public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  ::google::protobuf::internal::CachedSize* AccessCachedSize() const final;
-  void SharedCtor(::google::protobuf::Arena* arena);
-  void SharedDtor();
-  void InternalSwap(EventResponse* other);
 
   private:
   friend class ::google::protobuf::internal::AnyMetadata;
@@ -1563,54 +1549,16 @@ class EventResponse final :
   EventResponse(::google::protobuf::Arena* arena, const EventResponse& from);
   public:
 
-  static const ClassData _class_data_;
-  const ::google::protobuf::Message::ClassData*GetClassData() const final;
-
   ::google::protobuf::Metadata GetMetadata() const final;
 
   // nested types ----------------------------------------------------
 
   // accessors -------------------------------------------------------
 
-  enum : int {
-    kErrorFieldNumber = 2,
-    kSuccessFieldNumber = 1,
-  };
-  // string Error = 2;
-  void clear_error() ;
-  const std::string& error() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_error(Arg_&& arg, Args_... args);
-  std::string* mutable_error();
-  PROTOBUF_NODISCARD std::string* release_error();
-  void set_allocated_error(std::string* value);
-
-  private:
-  const std::string& _internal_error() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error(
-      const std::string& value);
-  std::string* _internal_mutable_error();
-
-  public:
-  // bool Success = 1;
-  void clear_success() ;
-  bool success() const;
-  void set_success(bool value);
-
-  private:
-  bool _internal_success() const;
-  void _internal_set_success(bool value);
-
-  public:
   // @@protoc_insertion_point(class_scope:netput.internal.EventResponse)
  private:
   class _Internal;
 
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<
-      1, 2, 0,
-      43, 2>
-      _table_;
   friend class ::google::protobuf::MessageLite;
   friend class ::google::protobuf::Arena;
   template <typename T>
@@ -1625,20 +1573,15 @@ class EventResponse final :
                               ::google::protobuf::Arena* arena);
         inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                               ::google::protobuf::Arena* arena, const Impl_& from);
-    ::google::protobuf::internal::ArenaStringPtr error_;
-    bool success_;
-    mutable ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_netput_2eproto;
 };// -------------------------------------------------------------------
 
 class DisconnectResponse final :
-    public ::google::protobuf::Message /* @@protoc_insertion_point(class_definition:netput.internal.DisconnectResponse) */ {
+    public ::google::protobuf::internal::ZeroFieldsBase /* @@protoc_insertion_point(class_definition:netput.internal.DisconnectResponse) */ {
  public:
   inline DisconnectResponse() : DisconnectResponse(nullptr) {}
-  ~DisconnectResponse() override;
   template<typename = void>
   explicit PROTOBUF_CONSTEXPR DisconnectResponse(::google::protobuf::internal::ConstantInitialized);
 
@@ -1722,29 +1665,15 @@ class DisconnectResponse final :
   DisconnectResponse* New(::google::protobuf::Arena* arena = nullptr) const final {
     return CreateMaybeMessage<DisconnectResponse>(arena);
   }
-  using ::google::protobuf::Message::CopyFrom;
-  void CopyFrom(const DisconnectResponse& from);
-  using ::google::protobuf::Message::MergeFrom;
-  void MergeFrom( const DisconnectResponse& from) {
-    DisconnectResponse::MergeImpl(*this, from);
+  using ::google::protobuf::internal::ZeroFieldsBase::CopyFrom;
+  inline void CopyFrom(const DisconnectResponse& from) {
+    ::google::protobuf::internal::ZeroFieldsBase::CopyImpl(*this, from);
   }
-  private:
-  static void MergeImpl(::google::protobuf::Message& to_msg, const ::google::protobuf::Message& from_msg);
+  using ::google::protobuf::internal::ZeroFieldsBase::MergeFrom;
+  void MergeFrom(const DisconnectResponse& from) {
+    ::google::protobuf::internal::ZeroFieldsBase::MergeImpl(*this, from);
+  }
   public:
-  PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
-  bool IsInitialized() const final;
-
-  ::size_t ByteSizeLong() const final;
-  const char* _InternalParse(const char* ptr, ::google::protobuf::internal::ParseContext* ctx) final;
-  ::uint8_t* _InternalSerialize(
-      ::uint8_t* target, ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
-  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
-
-  private:
-  ::google::protobuf::internal::CachedSize* AccessCachedSize() const final;
-  void SharedCtor(::google::protobuf::Arena* arena);
-  void SharedDtor();
-  void InternalSwap(DisconnectResponse* other);
 
   private:
   friend class ::google::protobuf::internal::AnyMetadata;
@@ -1756,54 +1685,16 @@ class DisconnectResponse final :
   DisconnectResponse(::google::protobuf::Arena* arena, const DisconnectResponse& from);
   public:
 
-  static const ClassData _class_data_;
-  const ::google::protobuf::Message::ClassData*GetClassData() const final;
-
   ::google::protobuf::Metadata GetMetadata() const final;
 
   // nested types ----------------------------------------------------
 
   // accessors -------------------------------------------------------
 
-  enum : int {
-    kErrorFieldNumber = 2,
-    kSuccessFieldNumber = 1,
-  };
-  // string Error = 2;
-  void clear_error() ;
-  const std::string& error() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_error(Arg_&& arg, Args_... args);
-  std::string* mutable_error();
-  PROTOBUF_NODISCARD std::string* release_error();
-  void set_allocated_error(std::string* value);
-
-  private:
-  const std::string& _internal_error() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error(
-      const std::string& value);
-  std::string* _internal_mutable_error();
-
-  public:
-  // bool Success = 1;
-  void clear_success() ;
-  bool success() const;
-  void set_success(bool value);
-
-  private:
-  bool _internal_success() const;
-  void _internal_set_success(bool value);
-
-  public:
   // @@protoc_insertion_point(class_scope:netput.internal.DisconnectResponse)
  private:
   class _Internal;
 
-  friend class ::google::protobuf::internal::TcParser;
-  static const ::google::protobuf::internal::TcParseTable<
-      1, 2, 0,
-      48, 2>
-      _table_;
   friend class ::google::protobuf::MessageLite;
   friend class ::google::protobuf::Arena;
   template <typename T>
@@ -1818,12 +1709,8 @@ class DisconnectResponse final :
                               ::google::protobuf::Arena* arena);
         inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                               ::google::protobuf::Arena* arena, const Impl_& from);
-    ::google::protobuf::internal::ArenaStringPtr error_;
-    bool success_;
-    mutable ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
-  union { Impl_ _impl_; };
   friend struct ::TableStruct_netput_2eproto;
 };// -------------------------------------------------------------------
 
@@ -2141,8 +2028,6 @@ class ConnectResponse final :
 
   enum : int {
     kSessionIDFieldNumber = 2,
-    kErrorFieldNumber = 3,
-    kSuccessFieldNumber = 1,
   };
   // string SessionID = 2;
   void clear_sessionid() ;
@@ -2160,40 +2045,14 @@ class ConnectResponse final :
   std::string* _internal_mutable_sessionid();
 
   public:
-  // string Error = 3;
-  void clear_error() ;
-  const std::string& error() const;
-  template <typename Arg_ = const std::string&, typename... Args_>
-  void set_error(Arg_&& arg, Args_... args);
-  std::string* mutable_error();
-  PROTOBUF_NODISCARD std::string* release_error();
-  void set_allocated_error(std::string* value);
-
-  private:
-  const std::string& _internal_error() const;
-  inline PROTOBUF_ALWAYS_INLINE void _internal_set_error(
-      const std::string& value);
-  std::string* _internal_mutable_error();
-
-  public:
-  // bool success = 1;
-  void clear_success() ;
-  bool success() const;
-  void set_success(bool value);
-
-  private:
-  bool _internal_success() const;
-  void _internal_set_success(bool value);
-
-  public:
   // @@protoc_insertion_point(class_scope:netput.internal.ConnectResponse)
  private:
   class _Internal;
 
   friend class ::google::protobuf::internal::TcParser;
   static const ::google::protobuf::internal::TcParseTable<
-      2, 3, 0,
-      54, 2>
+      0, 1, 0,
+      49, 2>
       _table_;
   friend class ::google::protobuf::MessageLite;
   friend class ::google::protobuf::Arena;
@@ -2210,8 +2069,6 @@ class ConnectResponse final :
         inline explicit Impl_(::google::protobuf::internal::InternalVisibility visibility,
                               ::google::protobuf::Arena* arena, const Impl_& from);
     ::google::protobuf::internal::ArenaStringPtr sessionid_;
-    ::google::protobuf::internal::ArenaStringPtr error_;
-    bool success_;
     mutable ::google::protobuf::internal::CachedSize _cached_size_;
     PROTOBUF_TSAN_DECLARE_MEMBER
   };
@@ -3049,29 +2906,6 @@ inline void ConnectRequest::set_allocated_userdata(std::string* value) {
 
 // ConnectResponse
 
-// bool success = 1;
-inline void ConnectResponse::clear_success() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.success_ = false;
-}
-inline bool ConnectResponse::success() const {
-  // @@protoc_insertion_point(field_get:netput.internal.ConnectResponse.success)
-  return _internal_success();
-}
-inline void ConnectResponse::set_success(bool value) {
-  _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:netput.internal.ConnectResponse.success)
-}
-inline bool ConnectResponse::_internal_success() const {
-  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.success_;
-}
-inline void ConnectResponse::_internal_set_success(bool value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.success_ = value;
-}
-
 // string SessionID = 2;
 inline void ConnectResponse::clear_sessionid() {
   PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
@@ -3123,59 +2957,6 @@ inline void ConnectResponse::set_allocated_sessionid(std::string* value) {
         }
   #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
   // @@protoc_insertion_point(field_set_allocated:netput.internal.ConnectResponse.SessionID)
-}
-
-// string Error = 3;
-inline void ConnectResponse::clear_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.error_.ClearToEmpty();
-}
-inline const std::string& ConnectResponse::error() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:netput.internal.ConnectResponse.Error)
-  return _internal_error();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void ConnectResponse::set_error(Arg_&& arg,
-                                                     Args_... args) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.error_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:netput.internal.ConnectResponse.Error)
-}
-inline std::string* ConnectResponse::mutable_error() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_error();
-  // @@protoc_insertion_point(field_mutable:netput.internal.ConnectResponse.Error)
-  return _s;
-}
-inline const std::string& ConnectResponse::_internal_error() const {
-  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.error_.Get();
-}
-inline void ConnectResponse::_internal_set_error(const std::string& value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.error_.Set(value, GetArena());
-}
-inline std::string* ConnectResponse::_internal_mutable_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  return _impl_.error_.Mutable( GetArena());
-}
-inline std::string* ConnectResponse::release_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  // @@protoc_insertion_point(field_release:netput.internal.ConnectResponse.Error)
-  return _impl_.error_.Release();
-}
-inline void ConnectResponse::set_allocated_error(std::string* value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.error_.SetAllocated(value, GetArena());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.error_.IsDefault()) {
-          _impl_.error_.Set("", GetArena());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:netput.internal.ConnectResponse.Error)
 }
 
 // -------------------------------------------------------------------
@@ -3238,82 +3019,6 @@ inline void DisconnectRequest::set_allocated_sessionid(std::string* value) {
 // -------------------------------------------------------------------
 
 // DisconnectResponse
-
-// bool Success = 1;
-inline void DisconnectResponse::clear_success() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.success_ = false;
-}
-inline bool DisconnectResponse::success() const {
-  // @@protoc_insertion_point(field_get:netput.internal.DisconnectResponse.Success)
-  return _internal_success();
-}
-inline void DisconnectResponse::set_success(bool value) {
-  _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:netput.internal.DisconnectResponse.Success)
-}
-inline bool DisconnectResponse::_internal_success() const {
-  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.success_;
-}
-inline void DisconnectResponse::_internal_set_success(bool value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.success_ = value;
-}
-
-// string Error = 2;
-inline void DisconnectResponse::clear_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.error_.ClearToEmpty();
-}
-inline const std::string& DisconnectResponse::error() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:netput.internal.DisconnectResponse.Error)
-  return _internal_error();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void DisconnectResponse::set_error(Arg_&& arg,
-                                                     Args_... args) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.error_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:netput.internal.DisconnectResponse.Error)
-}
-inline std::string* DisconnectResponse::mutable_error() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_error();
-  // @@protoc_insertion_point(field_mutable:netput.internal.DisconnectResponse.Error)
-  return _s;
-}
-inline const std::string& DisconnectResponse::_internal_error() const {
-  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.error_.Get();
-}
-inline void DisconnectResponse::_internal_set_error(const std::string& value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.error_.Set(value, GetArena());
-}
-inline std::string* DisconnectResponse::_internal_mutable_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  return _impl_.error_.Mutable( GetArena());
-}
-inline std::string* DisconnectResponse::release_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  // @@protoc_insertion_point(field_release:netput.internal.DisconnectResponse.Error)
-  return _impl_.error_.Release();
-}
-inline void DisconnectResponse::set_allocated_error(std::string* value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.error_.SetAllocated(value, GetArena());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.error_.IsDefault()) {
-          _impl_.error_.Set("", GetArena());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:netput.internal.DisconnectResponse.Error)
-}
 
 // -------------------------------------------------------------------
 
@@ -4689,82 +4394,6 @@ inline EventRequest::EventCase EventRequest::Event_case() const {
 // -------------------------------------------------------------------
 
 // EventResponse
-
-// bool Success = 1;
-inline void EventResponse::clear_success() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.success_ = false;
-}
-inline bool EventResponse::success() const {
-  // @@protoc_insertion_point(field_get:netput.internal.EventResponse.Success)
-  return _internal_success();
-}
-inline void EventResponse::set_success(bool value) {
-  _internal_set_success(value);
-  // @@protoc_insertion_point(field_set:netput.internal.EventResponse.Success)
-}
-inline bool EventResponse::_internal_success() const {
-  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.success_;
-}
-inline void EventResponse::_internal_set_success(bool value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.success_ = value;
-}
-
-// string Error = 2;
-inline void EventResponse::clear_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.error_.ClearToEmpty();
-}
-inline const std::string& EventResponse::error() const
-    ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  // @@protoc_insertion_point(field_get:netput.internal.EventResponse.Error)
-  return _internal_error();
-}
-template <typename Arg_, typename... Args_>
-inline PROTOBUF_ALWAYS_INLINE void EventResponse::set_error(Arg_&& arg,
-                                                     Args_... args) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.error_.Set(static_cast<Arg_&&>(arg), args..., GetArena());
-  // @@protoc_insertion_point(field_set:netput.internal.EventResponse.Error)
-}
-inline std::string* EventResponse::mutable_error() ABSL_ATTRIBUTE_LIFETIME_BOUND {
-  std::string* _s = _internal_mutable_error();
-  // @@protoc_insertion_point(field_mutable:netput.internal.EventResponse.Error)
-  return _s;
-}
-inline const std::string& EventResponse::_internal_error() const {
-  PROTOBUF_TSAN_READ(&_impl_._tsan_detect_race);
-  return _impl_.error_.Get();
-}
-inline void EventResponse::_internal_set_error(const std::string& value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  _impl_.error_.Set(value, GetArena());
-}
-inline std::string* EventResponse::_internal_mutable_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  ;
-  return _impl_.error_.Mutable( GetArena());
-}
-inline std::string* EventResponse::release_error() {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  // @@protoc_insertion_point(field_release:netput.internal.EventResponse.Error)
-  return _impl_.error_.Release();
-}
-inline void EventResponse::set_allocated_error(std::string* value) {
-  PROTOBUF_TSAN_WRITE(&_impl_._tsan_detect_race);
-  _impl_.error_.SetAllocated(value, GetArena());
-  #ifdef PROTOBUF_FORCE_COPY_DEFAULT_STRING
-        if (_impl_.error_.IsDefault()) {
-          _impl_.error_.Set("", GetArena());
-        }
-  #endif  // PROTOBUF_FORCE_COPY_DEFAULT_STRING
-  // @@protoc_insertion_point(field_set_allocated:netput.internal.EventResponse.Error)
-}
 
 #ifdef __GNUC__
 #pragma GCC diagnostic pop
