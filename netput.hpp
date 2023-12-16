@@ -58,7 +58,7 @@ namespace netput
     public:
         client(const std::string &host, uint16_t port);
 
-        ~client();
+        ~client() = default;
 
         void connect(const uint8_t *buffer, size_t size);
 
