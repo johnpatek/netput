@@ -79,7 +79,7 @@ namespace netput
         std::string &get_session_id() const;
 
     private:
-        std::unique_ptr<internal::client> _client;
+        std::unique_ptr<internal::client, std::function<void(internal::client *)>> _client;
     };
 
     class service;
@@ -98,8 +98,9 @@ namespace netput
         void handle_mouse_button(const std::function<void(const std::string &, uint64_t, uint32_t, mouse_button, input_state, bool, int32_t, int32_t)> &mouse_button_handler);
         void handle_mouse_wheel(const std::function<void(const std::string &, uint64_t, uint32_t, int32_t, int32_t, float, float)> &mouse_wheel_handler);
         void handle_window(const std::function<void(const std::string &)> &window_handler);
+
     private:
-        std::unique_ptr<internal::server> _server;
+        std::unique_ptr<internal::server, std::function<void(internal::server *)>> _server;
     };
 }
 

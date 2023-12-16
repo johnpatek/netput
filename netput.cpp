@@ -259,12 +259,22 @@ namespace netput
 
     client::client(const std::string &host, uint16_t port)
     {
-        _client = std::unique_ptr<internal::client>(new internal::client(make_address(host, port)));
+        _client = std::unique_ptr<internal::client, std::function<void(internal::client *)>>(
+            new internal::client(make_address(host, port)),
+            [](internal::client *client)
+            {
+                delete client;
+            });
     }
 
     server::server(const std::string &host, uint16_t port)
     {
-        _server = std::unique_ptr<internal::server>(new internal::server(make_address(host, port)));
+        _server = std::unique_ptr<internal::server, std::function<void(internal::server *)>>(
+            new internal::server(make_address(host, port)),
+            [](internal::server *server)
+            {
+                delete server;
+            });
     }
 
     void server::serve()
