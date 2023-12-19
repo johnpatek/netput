@@ -267,6 +267,58 @@ namespace netput
             });
     }
 
+    void client::connect(const uint8_t *buffer, size_t size)
+    {
+        netput::internal::ConnectRequest request;
+        netput::internal::ConnectResponse response;
+        std::pair<bool, std::string> result;
+
+        if (buffer != nullptr && size > 0)
+        {
+            request.set_userdata(std::string(reinterpret_cast<const char *>(buffer), size));
+        }
+
+        result = _client->connect(request, &response);
+        if (!result.first)
+        {
+            throw std::runtime_error(std::string("connect: ") + result.second);
+        }
+
+    }
+
+    void client::disconnect()
+    {
+    }
+
+    void client::send_keyboard(uint64_t timestamp, uint32_t window_id, input_state state, bool repeat, uint32_t key_code)
+    {
+    }
+
+    void client::send_mouse_motion(uint64_t timestamp, uint32_t window_id, mouse_button_state_mask state_mask, int32_t x, int32_t y, int32_t relative_x, int32_t relative_y)
+    {
+    }
+
+    void client::send_mouse_button(uint64_t timestamp, uint32_t window_id, mouse_button button, input_state state, bool double_click, int32_t x, int32_t y)
+    {
+    }
+
+    void client::send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y)
+    {
+    }
+
+    void client::send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y, float precise_x, float precise_y)
+    {
+    }
+
+    void client::send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2)
+    {
+    }
+
+    const std::string &client::get_session_id() const
+    {
+        return _session_id;
+    }
+
     server::server(const std::string &host, uint16_t port)
     {
         _server = std::unique_ptr<internal::server, std::function<void(internal::server *)>>(

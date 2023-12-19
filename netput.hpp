@@ -76,9 +76,10 @@ namespace netput
 
         void send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2);
 
-        std::string &get_session_id() const;
+        const std::string &get_session_id() const;
 
     private:
+        std::string _session_id;
         std::unique_ptr<internal::client, std::function<void(internal::client *)>> _client;
     };
 

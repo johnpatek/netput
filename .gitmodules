@@ -4,3 +4,6 @@
 [submodule "uuid_v4"]
 	path = uuid_v4
 	url = https://github.com/crashoz/uuid_v4
+[submodule "capnproto"]
+	path = capnproto
+	url = https://github.com/capnproto/capnproto.git
