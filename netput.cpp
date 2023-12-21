@@ -1,14 +1,8 @@
+#include "netput.capnp.h"
 #include "netput.hpp"
-#include "netput.pb.h"
-#include "netput.grpc.pb.h"
 
-#include <grpc/grpc.h>
-#include <grpcpp/channel.h>
-#include <grpcpp/client_context.h>
-#include <grpcpp/create_channel.h>
-#include <grpcpp/server.h>
-#include <grpcpp/server_builder.h>
-#include <grpcpp/server_context.h>
+#include <capnp/ez-rpc.h>
+#include <capnp/message.h>
 
 #include <uuid_v4.h>
 
@@ -24,6 +18,16 @@ static std::string make_address(const std::string &host, uint16_t port)
 
 namespace netput
 {
+    static input_state input_state_from_rpc(rpc::InputState state)
+    {
+        return (state == rpc::InputState::PRESSED) ? input_state::pressed : input_state::released;
+    }
+
+    static netput::rpc::InputState input_state_to_rpc(input_state state)
+    {
+        return (state == input_state::pressed) ? rpc::InputState::PRESSED : rpc::InputState::RELEASED;
+    }
+
     namespace internal
     {
         class client
@@ -31,213 +35,159 @@ namespace netput
         public:
             client(const std::string &address)
             {
-                _channel = grpc::CreateChannel(address, grpc::InsecureChannelCredentials());
-                _stub = std::unique_ptr<Netput::Stub>(
-                    new Netput::Stub(_channel));
+                _client = std::make_unique<capnp::EzRpcClient>(address);
+                _main = std::make_unique<netput::rpc::Netput::Client>(_client->getMain<netput::rpc::Netput::Client>());
             }
 
             ~client() = default;
 
-            std::pair<bool, std::string> connect(
-                const ConnectRequest &request,
-                ConnectResponse *response)
-            {
-                grpc::ClientContext context;
-                std::pair<bool, std::string> result;
-                grpc::Status status;
+            client(const client &copy) = delete;
 
-                result.first = true;
-                status = _stub->Connect(&context, request, response);
-                if (status.error_code() != grpc::StatusCode::OK)
+            client(client &&move) = default;
+
+            void connect(const uint8_t *buffer, size_t size)
+            {
+                auto request = _main->connectRequest();
+                auto builder = request.initRequest();
+                auto user_data_builder = builder.initUserData(size);
+                std::memcpy(user_data_builder.begin(), buffer, size);
+                auto promise = request.send();
+                auto reader = promise.wait(_client->getWaitScope());
+                if (!reader.hasResponse())
                 {
-                    result.first = false;
-                    result.second = status.error_message();
+                    throw std::runtime_error("failed to read response from server");
                 }
-                return result;
+
+                auto response = reader.getResponse();
+                auto message = response.getMessage();
+                if (message.isError())
+                {
+                    throw std::runtime_error(std::string("error returned from server: ") + message.getError().cStr());
+                }
+
+                _session_id = message.getSessionId();
             }
 
-            std::pair<bool, std::string> disconnect(
-                const DisconnectRequest &request,
-                DisconnectResponse *response)
+            void disconnect()
             {
-                grpc::ClientContext context;
-                std::pair<bool, std::string> result;
-                grpc::Status status;
-
-                result.first = true;
-                status = _stub->Disconnect(&context, request, response);
-                if (status.error_code() != grpc::StatusCode::OK)
-                {
-                    result.first = false;
-                    result.second = status.error_message();
-                }
-                return result;
+                auto request = _main->disconnectRequest();
+                auto builder = request.initRequest();
+                builder.setSessionId(_session_id);
+                auto promise = request.send();
+                auto reader = promise.wait(_client->getWaitScope());
             }
 
-            std::pair<bool, std::string> event(
-                const EventRequest &request,
-                EventResponse *response)
+            void push(const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function)
             {
-                grpc::ClientContext context;
-                std::pair<bool, std::string> result;
-                grpc::Status status;
-
-                result.first = true;
-                status = _stub->Event(&context, request, response);
-                if (status.error_code() != grpc::StatusCode::OK)
-                {
-                    result.first = false;
-                    result.second = status.error_message();
-                }
-                return result;
+                auto request = _main->pushRequest();
+                auto builder = request.initEvent();
+                builder.setSessionId(_session_id);
+                auto info_builder = builder.initInfo();
+                build_function(info_builder);
+                auto promise = request.send();
+                promise.detach([&](const kj::Exception &error)
+                               {
+                    if(_error_handler)
+                    {
+                        _error_handler(error.getDescription());
+                    } });
             }
+
+            void send_keyboard(uint64_t timestamp, uint32_t window_id, input_state state, bool repeat, uint32_t key_code)
+            {
+                const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function = [&](netput::rpc::Event::Info::Builder &builder)
+                {
+                    auto keyboard_builder = builder.initKeyboard();
+                    keyboard_builder.setTimestamp(timestamp);
+                    keyboard_builder.setWindowId(window_id);
+                    keyboard_builder.setState(input_state_to_rpc(state));
+                    keyboard_builder.setRepeat(repeat);
+                    keyboard_builder.setKeyCode(key_code);
+                };
+                push(build_function);
+            }
+
+            void send_mouse_motion(uint64_t timestamp, uint32_t window_id, mouse_button_state_mask state_mask, int32_t x, int32_t y, int32_t relative_x, int32_t relative_y)
+            {
+                const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function = [&](netput::rpc::Event::Info::Builder &builder)
+                {
+                    auto mouse_motion_builder = builder.initMouseMotion();
+                    mouse_motion_builder.setTimestamp(timestamp);
+                    mouse_motion_builder.setWindowId(window_id);
+                    auto mouse_motion_state_builder = mouse_motion_builder.initStateMask();
+                    mouse_motion_state_builder.setLeft(input_state_to_rpc(state_mask.left));
+                };
+                push(build_function);
+            }
+
+            void send_mouse_button(uint64_t timestamp, uint32_t window_id, mouse_button button, input_state state, bool double_click, int32_t x, int32_t y);
+
+            void send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y);
+
+            void send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y, float precise_x, float precise_y);
+
+            void send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2);
+
+            std::function<void(const std::string &)> _error_handler;
 
         private:
-            std::shared_ptr<grpc::Channel> _channel;
-            std::unique_ptr<Netput::Stub> _stub;
+            std::unique_ptr<capnp::EzRpcClient> _client;
+            std::unique_ptr<netput::rpc::Netput::Client> _main;
+            std::string _session_id;
         };
 
-        class server final : public netput::internal::Netput::Service
+        class server final : public netput::rpc::Netput::Server
         {
         public:
-            server(const std::string &address)
+            server(const std::string &address) : _exit_channel(kj::newPromiseAndFulfiller<void>())
             {
-                grpc::ServerBuilder server_builder;
-                server_builder.AddListeningPort(address, grpc::InsecureServerCredentials());
-                server_builder.RegisterService(this);
-                _server = server_builder.BuildAndStart();
             }
 
-            ~server() = default;
+            ~server()
+            {
+                shutdown();
+            }
 
             void serve()
             {
-                if (_server)
-                {
-                    _server->Wait();
-                }
+                kj::WaitScope &wait_scope = _rpc_server->getWaitScope();
+                _active = true;
+                _exit_channel.promise.wait(wait_scope);
             }
 
             void shutdown()
             {
-                if (_server)
+                if (_active)
                 {
-                    _server->Shutdown();
+                    _exit_channel.fulfiller->fulfill();
                 }
             }
 
-            grpc::Status Connect(
-                grpc::ServerContext *context,
-                const netput::internal::ConnectRequest *request,
-                netput::internal::ConnectResponse *response) override
+            kj::Promise<void> connect(netput::rpc::Netput::Server::ConnectContext context) override
             {
-                const std::string &user_data = request->userdata();
-                grpc::Status result;
-                std::string session_id;
-
-                result = grpc::Status::OK;
-
-                if (_connect_handler)
-                {
-                    if (!_connect_handler(reinterpret_cast<const uint8_t *>(user_data.data()), user_data.size()))
-                    {
-                        result = grpc::Status(grpc::StatusCode::PERMISSION_DENIED, "connection rejected");
-                    }
-                }
-
-                if (result.error_code() == grpc::StatusCode::OK)
-                {
-                    session_id = generate_session_id();
-                    if (_session_handler)
-                    {
-                        if (!_session_handler(session_id))
-                        {
-                            result = grpc::Status(grpc::StatusCode::UNAVAILABLE, "failed to handle session");
-                        }
-                    }
-                }
-
-                if (result.error_code() == grpc::StatusCode::OK)
-                {
-                    response->set_sessionid(generate_session_id());
-                }
-
-                return result;
+                const netput::rpc::ConnectRequest::Reader reader = context.getParams().getRequest();
+                netput::rpc::ConnectResponse::Builder builder = context.getResults().initResponse();
+                handle_connect(reader, builder);
+                return kj::READY_NOW;
             }
 
-            grpc::Status Disconnect(
-                grpc::ServerContext *context,
-                const netput::internal::DisconnectRequest *request,
-                netput::internal::DisconnectResponse *response)
+            kj::Promise<void> push(netput::rpc::Netput::Server::PushContext context) override
             {
-                grpc::Status result;
-
-                result = grpc::Status::OK;
-                if (_disconnect_handler)
-                {
-                    if (!_disconnect_handler(request->sessionid()))
-                    {
-                        result = grpc::Status(grpc::StatusCode::UNAVAILABLE, "failed to handle session disconnect");
-                    }
-                }
-                return result;
+                const netput::rpc::Event::Reader reader = context.getParams().getEvent();
+                handle_push(reader);
+                return kj::READY_NOW;
             }
 
-            grpc::Status keyboardEvent(
-                const std::string &session_id,
-                const netput::internal::KeyboardEvent &keyboard_event)
+            kj::Promise<void> disconnect(netput::rpc::Netput::Server::DisconnectContext context) override
             {
-                const input_state state = (keyboard_event.state() == netput::internal::KeyState::Up) ? input_state::released : input_state::pressed;
-                if (_keyboard_handler)
-                {
-                    _keyboard_handler(
-                        session_id,
-                        keyboard_event.timestamp(),
-                        keyboard_event.windowid(),
-                        state,
-                        keyboard_event.repeat(),
-                        keyboard_event.keycode());
-                }
-                return grpc::Status::OK;
-            }
-
-            grpc::Status mouseMotionEvent(
-                const std::string &session_id,
-                const netput::internal::MouseMotionEvent &mouse_motion_event)
-            {
-                return grpc::Status::OK;
-            }
-
-            grpc::Status Event(
-                grpc::ServerContext *context,
-                const netput::internal::EventRequest *request,
-                netput::internal::EventResponse *response)
-            {
-                grpc::Status status;
-                switch (request->type())
-                {
-                case netput::internal::EventType::KeyboardType:
-                    status = keyboardEvent(request->sessionid(), request->keyboard());
-                    break;
-                case netput::internal::EventType::MouseMotionType:
-                    status = mouseMotionEvent(request->sessionid(), request->mousemotion());
-                    break;
-                case netput::internal::EventType::MouseButtonType:
-                    break;
-                case netput::internal::EventType::MouseWheelType:
-                    break;
-                case netput::internal::EventType::WindowType:
-                    break;
-                default:
-                    status = grpc::Status(grpc::StatusCode::OUT_OF_RANGE, "invalid event type");
-                    break;
-                }
-                return status;
+                const netput::rpc::DisconnectRequest::Reader reader = context.getParams().getRequest();
+                netput::rpc::DisconnectResponse::Builder builder = context.getResults().initResponse();
+                handle_disconnect(reader, builder);
+                return kj::READY_NOW;
             }
 
             // TODO: maybe move these, probably not
-            std::function<bool(const uint8_t *, size_t)> _connect_handler;
-            std::function<bool(const std::string &)> _session_handler;
+            std::function<std::pair<bool, std::string>(const uint8_t *, size_t)> _connect_handler;
             std::function<bool(const std::string &)> _disconnect_handler;
             std::function<void(const std::string &, uint64_t, uint32_t, input_state, bool, uint32_t)> _keyboard_handler;
             std::function<void(const std::string &, uint64_t, uint32_t, mouse_button_state_mask, int32_t, int32_t, int32_t, int32_t)> _mouse_motion_handler;
@@ -246,14 +196,149 @@ namespace netput
             std::function<void(const std::string &)> _window_handler;
 
         private:
+            void handle_connect(
+                const netput::rpc::ConnectRequest::Reader &reader,
+                netput::rpc::ConnectResponse::Builder &builder)
+            {
+                const uint8_t *user_data_buffer;
+                size_t user_data_size;
+                std::pair<bool, std::string> result;
+
+                if (reader.hasUserData())
+                {
+                    const capnp::Data::Reader &user_data = reader.getUserData();
+                    user_data_buffer = user_data.begin();
+                    user_data_size = user_data.size();
+                }
+                else
+                {
+                    user_data_buffer = nullptr;
+                    user_data_size = 0;
+                }
+
+                if (_connect_handler)
+                {
+                    result = _connect_handler(user_data_buffer, user_data_size);
+                }
+                else
+                {
+                    result.first = false;
+                    result.second = "unimplemented connection handler";
+                }
+
+                if (result.first)
+                {
+                    builder.initMessage().setSessionId(result.second);
+                }
+                else
+                {
+                    builder.initMessage().setError(result.second);
+                }
+            }
+
+            void handle_push(const netput::rpc::Event::Reader &reader)
+            {
+                const std::string session_id = reader.getSessionId();
+                const netput::rpc::Event::Info::Reader info = reader.getInfo();
+                switch (info.which())
+                {
+                case netput::rpc::Event::Info::MOUSE_MOTION:
+                {
+                    const netput::rpc::MouseMotionEvent::Reader mouse_motion_reader = info.getMouseMotion();
+                    handle_mouse_motion(session_id, mouse_motion_reader);
+                    break;
+                }
+                case netput::rpc::Event::Info::MOUSE_BUTTON:
+                {
+                    const netput::rpc::MouseButtonEvent::Reader mouse_button_reader = info.getMouseButton();
+                    handle_mouse_button(session_id, mouse_button_reader);
+                    break;
+                }
+                case netput::rpc::Event::Info::MOUSE_WHEEL:
+                {
+                    const netput::rpc::MouseWheelEvent::Reader mouse_wheel_reader = info.getMouseWheel();
+                    handle_mouse_wheel(session_id, mouse_wheel_reader);
+                    break;
+                }
+                case netput::rpc::Event::Info::KEYBOARD:
+                {
+                    const netput::rpc::KeyboardEvent::Reader keyboard_reader = info.getKeyboard();
+                    handle_keyboard(session_id, keyboard_reader);
+                    break;
+                }
+                case netput::rpc::Event::Info::WINDOW:
+                {
+                    const netput::rpc::WindowEvent::Reader window_reader = info.getWindow();
+                    handle_window(session_id, window_reader);
+                    break;
+                }
+                }
+            }
+
+            void handle_disconnect(
+                const netput::rpc::DisconnectRequest::Reader &reader,
+                netput::rpc::DisconnectResponse::Builder &builder)
+            {
+            }
+
+            void handle_mouse_motion(
+                const std::string &session_id,
+                const netput::rpc::MouseMotionEvent::Reader &reader)
+            {
+                const netput::mouse_button_state_mask state_mask = {
+                    .left = input_state_from_rpc(reader.getStateMask().getLeft()),
+                    .middle = input_state_from_rpc(reader.getStateMask().getMiddle()),
+                    .right = input_state_from_rpc(reader.getStateMask().getRight()),
+                    .x1 = input_state_from_rpc(reader.getStateMask().getX1()),
+                    .x2 = input_state_from_rpc(reader.getStateMask().getX2()),
+                };
+                if (_mouse_motion_handler)
+                {
+                    _mouse_motion_handler(
+                        session_id,
+                        reader.getTimestamp(),
+                        reader.getWindowId(),
+                        state_mask,
+                        reader.getX(),
+                        reader.getY(),
+                        reader.getRelativeX(),
+                        reader.getRelativeY());
+                }
+            }
+
+            void handle_mouse_button(
+                const std::string &session_id,
+                const netput::rpc::MouseButtonEvent::Reader &reader)
+            {
+            }
+
+            void handle_mouse_wheel(
+                const std::string &session_id,
+                const netput::rpc::MouseWheelEvent::Reader &reader)
+            {
+            }
+
+            void handle_keyboard(
+                const std::string &session_id,
+                const netput::rpc::KeyboardEvent::Reader &reader)
+            {
+            }
+
+            void handle_window(
+                const std::string &session_id,
+                const netput::rpc::WindowEvent::Reader &reader)
+            {
+            }
+
             std::string generate_session_id()
             {
                 return _uuid_generator.getUUID().str();
             }
 
+            std::unique_ptr<capnp::EzRpcServer> _rpc_server;
+            kj::PromiseFulfillerPair<void> _exit_channel;
+            bool _active;
             UUIDv4::UUIDGenerator<std::mt19937_64> _uuid_generator;
-
-            std::unique_ptr<grpc::Server> _server;
         };
     }
 
@@ -269,21 +354,6 @@ namespace netput
 
     void client::connect(const uint8_t *buffer, size_t size)
     {
-        netput::internal::ConnectRequest request;
-        netput::internal::ConnectResponse response;
-        std::pair<bool, std::string> result;
-
-        if (buffer != nullptr && size > 0)
-        {
-            request.set_userdata(std::string(reinterpret_cast<const char *>(buffer), size));
-        }
-
-        result = _client->connect(request, &response);
-        if (!result.first)
-        {
-            throw std::runtime_error(std::string("connect: ") + result.second);
-        }
-
     }
 
     void client::disconnect()
@@ -314,11 +384,6 @@ namespace netput
     {
     }
 
-    const std::string &client::get_session_id() const
-    {
-        return _session_id;
-    }
-
     server::server(const std::string &host, uint16_t port)
     {
         _server = std::unique_ptr<internal::server, std::function<void(internal::server *)>>(
@@ -331,18 +396,15 @@ namespace netput
 
     void server::serve()
     {
-        _server->serve();
     }
 
     void server::shutdown()
     {
-        _server->shutdown();
     }
 
-    void server::handle_connect(const std::function<bool(const uint8_t *, size_t)> &connect_handler, std::function<bool(const std::string &)> session_handler)
+    void server::handle_connect(const std::function<std::pair<bool, std::string>(const uint8_t *, size_t)> &connect_handler)
     {
         _server->_connect_handler = connect_handler;
-        _server->_session_handler = session_handler;
     }
 
     void server::handle_disconnect(const std::function<bool(const std::string &)> &disconnect_handler)
@@ -374,5 +436,4 @@ namespace netput
     {
         _server->_window_handler = window_handler;
     }
-
 }
