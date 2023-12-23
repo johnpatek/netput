@@ -4,8 +4,6 @@
 #include <capnp/ez-rpc.h>
 #include <capnp/message.h>
 
-#include <uuid_v4.h>
-
 #include <functional>
 #include <sstream>
 
@@ -23,9 +21,95 @@ namespace netput
         return (state == rpc::InputState::PRESSED) ? input_state::pressed : input_state::released;
     }
 
-    static netput::rpc::InputState input_state_to_rpc(input_state state)
+    static rpc::InputState input_state_to_rpc(input_state state)
     {
         return (state == input_state::pressed) ? rpc::InputState::PRESSED : rpc::InputState::RELEASED;
+    }
+
+    static mouse_button mouse_button_from_rpc(rpc::MouseButton button)
+    {
+        mouse_button result;
+        switch (button)
+        {
+        case rpc::MouseButton::LEFT:
+            result = mouse_button::left;
+            break;
+        case rpc::MouseButton::MIDDLE:
+            result = mouse_button::middle;
+            break;
+        case rpc::MouseButton::RIGHT:
+            result = mouse_button::right;
+            break;
+        case rpc::MouseButton::X1:
+            result = mouse_button::x1;
+            break;
+        case rpc::MouseButton::X2:
+            result = mouse_button::x2;
+            break;
+        }
+        return result;
+    }
+
+    static rpc::MouseButton mouse_button_to_rpc(mouse_button button)
+    {
+        rpc::MouseButton result;
+        switch (button)
+        {
+        case mouse_button::left:
+            result = rpc::MouseButton::LEFT;
+            break;
+        case mouse_button::middle:
+            result = rpc::MouseButton::MIDDLE;
+            break;
+        case mouse_button::right:
+            result = rpc::MouseButton::RIGHT;
+            break;
+        case mouse_button::x1:
+            result = rpc::MouseButton::X1;
+            break;
+        case mouse_button::x2:
+            result = rpc::MouseButton::X2;
+            break;
+        }
+        return result;
+    }
+
+    static window_event window_event_from_rpc(rpc::WindowEventType event)
+    {
+        const std::unordered_map<rpc::WindowEventType, window_event> map = {
+            {rpc::WindowEventType::SHOWN_TYPE, window_event::shown},
+            {rpc::WindowEventType::HIDDEN_TYPE, window_event::hidden},
+            {rpc::WindowEventType::EXPOSED_TYPE, window_event::exposed},
+            {rpc::WindowEventType::MOVED_TYPE, window_event::moved},
+            {rpc::WindowEventType::RESIZED_TYPE, window_event::resized},
+            {rpc::WindowEventType::MINIMIZED_TYPE, window_event::minimized},
+            {rpc::WindowEventType::MAXIMIZED_TYPE, window_event::maximized},
+            {rpc::WindowEventType::RESTORED_TYPE, window_event::restored},
+            {rpc::WindowEventType::MOUSE_ENTER_TYPE, window_event::mouse_enter},
+            {rpc::WindowEventType::MOUSE_LEAVE_TYPE, window_event::mouse_leave},
+            {rpc::WindowEventType::FOCUS_GAINED_TYPE, window_event::focus_gained},
+            {rpc::WindowEventType::FOCUS_LOST_TYPE, window_event::focus_lost},
+        };
+        return map.at(event);
+    }
+
+    static rpc::WindowEventType window_event_to_rpc(window_event event)
+    {
+        const std::unordered_map<window_event, rpc::WindowEventType> map = {
+            {window_event::shown, rpc::WindowEventType::SHOWN_TYPE},
+            {window_event::hidden, rpc::WindowEventType::HIDDEN_TYPE},
+            {window_event::exposed, rpc::WindowEventType::EXPOSED_TYPE},
+            {window_event::moved, rpc::WindowEventType::MOVED_TYPE},
+            {window_event::resized, rpc::WindowEventType::RESIZED_TYPE},
+            {window_event::minimized, rpc::WindowEventType::MINIMIZED_TYPE},
+            {window_event::maximized, rpc::WindowEventType::MAXIMIZED_TYPE},
+            {window_event::restored, rpc::WindowEventType::RESTORED_TYPE},
+            {window_event::mouse_enter, rpc::WindowEventType::MOUSE_ENTER_TYPE},
+            {window_event::mouse_leave, rpc::WindowEventType::MOUSE_LEAVE_TYPE},
+            {window_event::focus_gained, rpc::WindowEventType::FOCUS_GAINED_TYPE},
+            {window_event::focus_lost, rpc::WindowEventType::FOCUS_LOST_TYPE},
+        };
+        return map.at(event);
     }
 
     namespace internal
@@ -35,8 +119,8 @@ namespace netput
         public:
             client(const std::string &address)
             {
-                _client = std::make_unique<capnp::EzRpcClient>(address);
-                _main = std::make_unique<netput::rpc::Netput::Client>(_client->getMain<netput::rpc::Netput::Client>());
+                _rpc_client = std::make_unique<capnp::EzRpcClient>(address);
+                _main = std::make_unique<netput::rpc::Netput::Client>(_rpc_client->getMain<netput::rpc::Netput::Client>());
             }
 
             ~client() = default;
@@ -52,7 +136,7 @@ namespace netput
                 auto user_data_builder = builder.initUserData(size);
                 std::memcpy(user_data_builder.begin(), buffer, size);
                 auto promise = request.send();
-                auto reader = promise.wait(_client->getWaitScope());
+                auto reader = promise.wait(_rpc_client->getWaitScope());
                 if (!reader.hasResponse())
                 {
                     throw std::runtime_error("failed to read response from server");
@@ -74,7 +158,7 @@ namespace netput
                 auto builder = request.initRequest();
                 builder.setSessionId(_session_id);
                 auto promise = request.send();
-                auto reader = promise.wait(_client->getWaitScope());
+                auto reader = promise.wait(_rpc_client->getWaitScope());
             }
 
             void push(const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function)
@@ -85,12 +169,14 @@ namespace netput
                 auto info_builder = builder.initInfo();
                 build_function(info_builder);
                 auto promise = request.send();
-                promise.detach([&](const kj::Exception &error)
-                               {
-                    if(_error_handler)
+                promise.detach(
+                    [&](const kj::Exception &error)
                     {
-                        _error_handler(error.getDescription());
-                    } });
+                        if (_error_handler)
+                        {
+                            _error_handler(error.getDescription());
+                        }
+                    });
             }
 
             void send_keyboard(uint64_t timestamp, uint32_t window_id, input_state state, bool repeat, uint32_t key_code)
@@ -116,22 +202,65 @@ namespace netput
                     mouse_motion_builder.setWindowId(window_id);
                     auto mouse_motion_state_builder = mouse_motion_builder.initStateMask();
                     mouse_motion_state_builder.setLeft(input_state_to_rpc(state_mask.left));
+                    mouse_motion_state_builder.setMiddle(input_state_to_rpc(state_mask.middle));
+                    mouse_motion_state_builder.setRight(input_state_to_rpc(state_mask.right));
+                    mouse_motion_state_builder.setX1(input_state_to_rpc(state_mask.x1));
+                    mouse_motion_state_builder.setX2(input_state_to_rpc(state_mask.x2));
+                    mouse_motion_builder.setX(x);
+                    mouse_motion_builder.setY(y);
+                    mouse_motion_builder.setRelativeX(relative_x);
+                    mouse_motion_builder.setRelativeY(relative_y);
                 };
                 push(build_function);
             }
 
-            void send_mouse_button(uint64_t timestamp, uint32_t window_id, mouse_button button, input_state state, bool double_click, int32_t x, int32_t y);
+            void send_mouse_button(uint64_t timestamp, uint32_t window_id, mouse_button button, input_state state, bool double_click, int32_t x, int32_t y)
+            {
+                const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function = [&](netput::rpc::Event::Info::Builder &builder)
+                {
+                    auto mouse_button_builder = builder.initMouseButton();
+                    mouse_button_builder.setTimestamp(timestamp);
+                    mouse_button_builder.setWindowId(window_id);
+                    mouse_button_builder.setState(input_state_to_rpc(state));
+                    mouse_button_builder.setX(x);
+                    mouse_button_builder.setY(y);
+                };
+                push(build_function);    
+            }
 
-            void send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y);
+            void send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y, float precise_x, float precise_y)
+            {
+                const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function = [&](netput::rpc::Event::Info::Builder &builder)
+                {
+                    auto mouse_wheel_builder = builder.initMouseWheel();
+                    mouse_wheel_builder.setTimestamp(timestamp);
+                    mouse_wheel_builder.setWindowId(window_id);
+                    mouse_wheel_builder.setX(x);
+                    mouse_wheel_builder.setY(y);
+                    mouse_wheel_builder.setPreciseX(x);
+                    mouse_wheel_builder.setPreciseY(y);
+                };
+                push(build_function);
+            }
 
-            void send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y, float precise_x, float precise_y);
-
-            void send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2);
+            void send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2)
+            {
+                const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function = [&](netput::rpc::Event::Info::Builder &builder)
+                {
+                    auto window_builder = builder.initWindow();
+                    window_builder.setTimestamp(timestamp);
+                    window_builder.setWindowId(window_id);
+                    window_builder.setType(window_event_to_rpc(type));
+                    window_builder.setArg1(arg1);
+                    window_builder.setArg1(arg2);
+                };
+                push(build_function);
+            }
 
             std::function<void(const std::string &)> _error_handler;
 
         private:
-            std::unique_ptr<capnp::EzRpcClient> _client;
+            std::unique_ptr<capnp::EzRpcClient> _rpc_client;
             std::unique_ptr<netput::rpc::Netput::Client> _main;
             std::string _session_id;
         };
@@ -141,6 +270,8 @@ namespace netput
         public:
             server(const std::string &address) : _exit_channel(kj::newPromiseAndFulfiller<void>())
             {
+                _rpc_server = std::make_unique<capnp::EzRpcServer>(*reinterpret_cast<capnp::Capability::Client*>(this), address);
+                _exit_channel = kj::newPromiseAndFulfiller<void>();
             }
 
             ~server()
@@ -190,10 +321,10 @@ namespace netput
             std::function<std::pair<bool, std::string>(const uint8_t *, size_t)> _connect_handler;
             std::function<bool(const std::string &)> _disconnect_handler;
             std::function<void(const std::string &, uint64_t, uint32_t, input_state, bool, uint32_t)> _keyboard_handler;
-            std::function<void(const std::string &, uint64_t, uint32_t, mouse_button_state_mask, int32_t, int32_t, int32_t, int32_t)> _mouse_motion_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, const mouse_button_state_mask &, int32_t, int32_t, int32_t, int32_t)> _mouse_motion_handler;
             std::function<void(const std::string &, uint64_t, uint32_t, mouse_button, input_state, bool, int32_t, int32_t)> _mouse_button_handler;
             std::function<void(const std::string &, uint64_t, uint32_t, int32_t, int32_t, float, float)> _mouse_wheel_handler;
-            std::function<void(const std::string &)> _window_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, window_event, int32_t, int32_t)> _window_handler;
 
         private:
             void handle_connect(
@@ -279,6 +410,24 @@ namespace netput
                 const netput::rpc::DisconnectRequest::Reader &reader,
                 netput::rpc::DisconnectResponse::Builder &builder)
             {
+                bool success;
+                success = true;
+                if (_disconnect_handler)
+                {
+                    if (reader.hasSessionId())
+                    {
+                        success = _disconnect_handler(reader.getSessionId());
+                    }
+                    else
+                    {
+                        success = false;
+                    }
+                }
+
+                if (!success)
+                {
+                    builder.setError("disconnect failed");
+                }
             }
 
             void handle_mouse_motion(
@@ -310,35 +459,73 @@ namespace netput
                 const std::string &session_id,
                 const netput::rpc::MouseButtonEvent::Reader &reader)
             {
+                if (_mouse_button_handler)
+                {
+                    _mouse_button_handler(
+                        session_id,
+                        reader.getTimestamp(),
+                        reader.getWindowId(),
+                        mouse_button_from_rpc(reader.getButton()),
+                        input_state_from_rpc(reader.getState()),
+                        reader.getDouble(),
+                        reader.getX(),
+                        reader.getY());
+                }
             }
 
             void handle_mouse_wheel(
                 const std::string &session_id,
                 const netput::rpc::MouseWheelEvent::Reader &reader)
             {
+                if (_mouse_wheel_handler)
+                {
+                    _mouse_wheel_handler(
+                        session_id,
+                        reader.getTimestamp(),
+                        reader.getWindowId(),
+                        reader.getX(),
+                        reader.getY(),
+                        reader.getPreciseX(),
+                        reader.getPreciseY());
+                }
             }
 
             void handle_keyboard(
                 const std::string &session_id,
                 const netput::rpc::KeyboardEvent::Reader &reader)
             {
+                if (_keyboard_handler)
+                {
+                    _keyboard_handler(
+                        session_id,
+                        reader.getTimestamp(),
+                        reader.getWindowId(),
+                        input_state_from_rpc(
+                            reader.getState()),
+                        reader.getRepeat(),
+                        reader.getKeyCode());
+                }
             }
 
             void handle_window(
                 const std::string &session_id,
                 const netput::rpc::WindowEvent::Reader &reader)
             {
-            }
-
-            std::string generate_session_id()
-            {
-                return _uuid_generator.getUUID().str();
+                if(_window_handler)
+                {
+                    _window_handler(
+                        session_id,
+                        reader.getTimestamp(),
+                        reader.getWindowId(),
+                        window_event_from_rpc(reader.getType()),
+                        reader.getArg1(),
+                        reader.getArg2());
+                }
             }
 
             std::unique_ptr<capnp::EzRpcServer> _rpc_server;
             kj::PromiseFulfillerPair<void> _exit_channel;
             bool _active;
-            UUIDv4::UUIDGenerator<std::mt19937_64> _uuid_generator;
         };
     }
 
@@ -362,22 +549,27 @@ namespace netput
 
     void client::send_keyboard(uint64_t timestamp, uint32_t window_id, input_state state, bool repeat, uint32_t key_code)
     {
+        _client->send_keyboard(timestamp, window_id, state, repeat, key_code);
     }
 
-    void client::send_mouse_motion(uint64_t timestamp, uint32_t window_id, mouse_button_state_mask state_mask, int32_t x, int32_t y, int32_t relative_x, int32_t relative_y)
+    void client::send_mouse_motion(uint64_t timestamp, uint32_t window_id, const mouse_button_state_mask &state_mask, int32_t x, int32_t y, int32_t relative_x, int32_t relative_y)
     {
+        _client->send_mouse_motion(timestamp, window_id, state_mask, x, y, relative_x, relative_y);
     }
 
     void client::send_mouse_button(uint64_t timestamp, uint32_t window_id, mouse_button button, input_state state, bool double_click, int32_t x, int32_t y)
     {
+        _client->send_mouse_button(timestamp, window_id, button, state, double_click, x, y);
     }
 
     void client::send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y)
     {
+        _client->send_mouse_wheel(timestamp, window_id, x, y, static_cast<float>(x), static_cast<float>(y));
     }
 
     void client::send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y, float precise_x, float precise_y)
     {
+        _client->send_mouse_wheel(timestamp, window_id, x, y, precise_x, precise_y);
     }
 
     void client::send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2)
@@ -417,7 +609,7 @@ namespace netput
         _server->_keyboard_handler = keyboard_handler;
     }
 
-    void server::handle_mouse_motion(const std::function<void(const std::string &, uint64_t, uint32_t, mouse_button_state_mask, int32_t, int32_t, int32_t, int32_t)> &mouse_motion_handler)
+    void server::handle_mouse_motion(const std::function<void(const std::string &, uint64_t, uint32_t, const mouse_button_state_mask &, int32_t, int32_t, int32_t, int32_t)> &mouse_motion_handler)
     {
         _server->_mouse_motion_handler = mouse_motion_handler;
     }
@@ -432,7 +624,7 @@ namespace netput
         _server->_mouse_wheel_handler = mouse_wheel_handler;
     }
 
-    void server::handle_window(const std::function<void(const std::string &)> &window_handler)
+    void server::handle_window(const std::function<void(const std::string &, uint64_t, uint32_t, window_event, int32_t, int32_t)> &window_handler)
     {
         _server->_window_handler = window_handler;
     }
