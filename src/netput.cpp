@@ -134,7 +134,10 @@ namespace netput
                 auto request = _main->connectRequest();
                 auto builder = request.initRequest();
                 auto user_data_builder = builder.initUserData(size);
-                std::memcpy(user_data_builder.begin(), buffer, size);
+                if (size > 0)
+                {
+                    std::memcpy(user_data_builder.begin(), buffer, size);
+                }
                 auto promise = request.send();
                 auto reader = promise.wait(_rpc_client->getWaitScope());
                 if (!reader.hasResponse())
@@ -225,7 +228,7 @@ namespace netput
                     mouse_button_builder.setX(x);
                     mouse_button_builder.setY(y);
                 };
-                push(build_function);    
+                push(build_function);
             }
 
             void send_mouse_wheel(uint64_t timestamp, uint32_t window_id, int32_t x, int32_t y, float precise_x, float precise_y)
@@ -270,7 +273,7 @@ namespace netput
         public:
             server(const std::string &address) : _exit_channel(kj::newPromiseAndFulfiller<void>())
             {
-                _rpc_server = std::make_unique<capnp::EzRpcServer>(*reinterpret_cast<capnp::Capability::Client*>(this), address);
+                _rpc_server = std::make_unique<capnp::EzRpcServer>(*reinterpret_cast<capnp::Capability::Client *>(this), address);
                 _exit_channel = kj::newPromiseAndFulfiller<void>();
             }
 
@@ -434,13 +437,12 @@ namespace netput
                 const std::string &session_id,
                 const netput::rpc::MouseMotionEvent::Reader &reader)
             {
-                const netput::mouse_button_state_mask state_mask = {
-                    .left = input_state_from_rpc(reader.getStateMask().getLeft()),
-                    .middle = input_state_from_rpc(reader.getStateMask().getMiddle()),
-                    .right = input_state_from_rpc(reader.getStateMask().getRight()),
-                    .x1 = input_state_from_rpc(reader.getStateMask().getX1()),
-                    .x2 = input_state_from_rpc(reader.getStateMask().getX2()),
-                };
+                mouse_button_state_mask state_mask;
+                state_mask.left = input_state_from_rpc(reader.getStateMask().getLeft());
+                state_mask.middle = input_state_from_rpc(reader.getStateMask().getMiddle());
+                state_mask.right = input_state_from_rpc(reader.getStateMask().getRight());
+                state_mask.x1 = input_state_from_rpc(reader.getStateMask().getX1());
+                state_mask.x2 = input_state_from_rpc(reader.getStateMask().getX2());
                 if (_mouse_motion_handler)
                 {
                     _mouse_motion_handler(
@@ -511,7 +513,7 @@ namespace netput
                 const std::string &session_id,
                 const netput::rpc::WindowEvent::Reader &reader)
             {
-                if(_window_handler)
+                if (_window_handler)
                 {
                     _window_handler(
                         session_id,
@@ -541,10 +543,12 @@ namespace netput
 
     void client::connect(const uint8_t *buffer, size_t size)
     {
+        _client->connect(buffer, size);
     }
 
     void client::disconnect()
     {
+        _client->disconnect();
     }
 
     void client::send_keyboard(uint64_t timestamp, uint32_t window_id, input_state state, bool repeat, uint32_t key_code)
@@ -574,6 +578,7 @@ namespace netput
 
     void client::send_window(uint64_t timestamp, uint32_t window_id, window_event type, int32_t arg1, int32_t arg2)
     {
+        _client->send_window(timestamp, window_id, type, arg1, arg2);
     }
 
     server::server(const std::string &host, uint16_t port)
@@ -588,10 +593,12 @@ namespace netput
 
     void server::serve()
     {
+        _server->serve();
     }
 
     void server::shutdown()
     {
+        _server->shutdown();
     }
 
     void server::handle_connect(const std::function<std::pair<bool, std::string>(const uint8_t *, size_t)> &connect_handler)

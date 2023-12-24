@@ -2,15 +2,14 @@ cmake_minimum_required(VERSION 3.8)
 
 project(netput)
 
-option(ABSL_PROPAGATE_CXX_STD "" ON)
-option(ABSL_ENABLE_INSTALL "" ON)
-option(gRPC_INSTALL "" OFF)
-option(gRPC_BUILD_TESTS "" OFF)
+option(NETPUT_TESTS "" OFF)
 
-add_subdirectory(capnproto)
+add_subdirectory(vendor)
 
-add_library(netput STATIC netput.capnp.c++ netput.capnp.h netput.cpp)
+set(NETPUT_INCLUDE ${CMAKE_CURRENT_SOURCE_DIR})
 
-target_include_directories(netput PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/uuid_v4)
+add_subdirectory(src)
 
-target_link_libraries(netput PUBLIC capnp)
+if(NETPUT_TESTS)
+    add_subdirectory(test)
+endif()

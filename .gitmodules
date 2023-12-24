@@ -1,3 +1,9 @@
 [submodule "capnproto"]
-	path = capnproto
+	path = vendor/capnproto
 	url = https://github.com/capnproto/capnproto.git
+[submodule "vendor/sigfn"]
+	path = vendor/sigfn
+	url = https://github.com/johnpatek/sigfn.git
+[submodule "vendor/SDL"]
+	path = vendor/SDL
+	url = https://github.com/libsdl-org/SDL
