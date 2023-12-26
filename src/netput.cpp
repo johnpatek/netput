@@ -163,6 +163,10 @@ namespace netput
                 builder.setSessionId(_session_id);
                 auto promise = request.send();
                 auto reader = promise.wait(_rpc_client->getWaitScope());
+                if (reader.hasResponse() && reader.getResponse().hasError())
+                {
+                    throw std::runtime_error(std::string("error returned from server: ") + reader.getResponse().getError().cStr());
+                }
             }
 
             void push(const std::function<void(netput::rpc::Event::Info::Builder &)> &build_function)
