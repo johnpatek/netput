@@ -25,6 +25,7 @@ CAPNP_DECLARE_SCHEMA(fa4a1bc90f7e051b);
 CAPNP_DECLARE_SCHEMA(afebe44d7bd999ac);
 CAPNP_DECLARE_SCHEMA(cde28ab20dab3120);
 CAPNP_DECLARE_SCHEMA(b0e01c3b79eba209);
+CAPNP_DECLARE_SCHEMA(b8dd9d40f500f1a5);
 CAPNP_DECLARE_SCHEMA(91053e416163d71e);
 CAPNP_DECLARE_SCHEMA(f1c4f972666019a7);
 CAPNP_DECLARE_SCHEMA(b2ed5d8c33a99cfc);
@@ -89,6 +90,7 @@ struct Netput {
   struct ConnectParams;
   struct ConnectResults;
   struct PushParams;
+  struct PushResults;
   struct DisconnectParams;
   struct DisconnectResults;
 
@@ -139,6 +141,21 @@ struct Netput::PushParams {
 
   struct _capnpPrivate {
     CAPNP_DECLARE_STRUCT_HEADER(b0e01c3b79eba209, 0, 1)
+    #if !CAPNP_LITE
+    static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
+    #endif  // !CAPNP_LITE
+  };
+};
+
+struct Netput::PushResults {
+  PushResults() = delete;
+
+  class Reader;
+  class Builder;
+  class Pipeline;
+
+  struct _capnpPrivate {
+    CAPNP_DECLARE_STRUCT_HEADER(b8dd9d40f500f1a5, 0, 0)
     #if !CAPNP_LITE
     static constexpr ::capnp::_::RawBrandedSchema const* brand() { return &schema->defaultBrand; }
     #endif  // !CAPNP_LITE
@@ -413,7 +430,7 @@ public:
 
   ::capnp::Request< ::netput::rpc::Netput::ConnectParams,  ::netput::rpc::Netput::ConnectResults> connectRequest(
       ::kj::Maybe< ::capnp::MessageSize> sizeHint = nullptr);
-  ::capnp::StreamingRequest< ::netput::rpc::Netput::PushParams> pushRequest(
+  ::capnp::Request< ::netput::rpc::Netput::PushParams,  ::netput::rpc::Netput::PushResults> pushRequest(
       ::kj::Maybe< ::capnp::MessageSize> sizeHint = nullptr);
   ::capnp::Request< ::netput::rpc::Netput::DisconnectParams,  ::netput::rpc::Netput::DisconnectResults> disconnectRequest(
       ::kj::Maybe< ::capnp::MessageSize> sizeHint = nullptr);
@@ -438,7 +455,8 @@ protected:
   typedef ::capnp::CallContext<ConnectParams, ConnectResults> ConnectContext;
   virtual ::kj::Promise<void> connect(ConnectContext context);
   typedef  ::netput::rpc::Netput::PushParams PushParams;
-  typedef ::capnp::StreamingCallContext<PushParams> PushContext;
+  typedef  ::netput::rpc::Netput::PushResults PushResults;
+  typedef ::capnp::CallContext<PushParams, PushResults> PushContext;
   virtual ::kj::Promise<void> push(PushContext context);
   typedef  ::netput::rpc::Netput::DisconnectParams DisconnectParams;
   typedef  ::netput::rpc::Netput::DisconnectResults DisconnectResults;
@@ -694,6 +712,77 @@ public:
       : _typeless(kj::mv(typeless)) {}
 
   inline  ::netput::rpc::Event::Pipeline getEvent();
+private:
+  ::capnp::AnyPointer::Pipeline _typeless;
+  friend class ::capnp::PipelineHook;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+};
+#endif  // !CAPNP_LITE
+
+class Netput::PushResults::Reader {
+public:
+  typedef PushResults Reads;
+
+  Reader() = default;
+  inline explicit Reader(::capnp::_::StructReader base): _reader(base) {}
+
+  inline ::capnp::MessageSize totalSize() const {
+    return _reader.totalSize().asPublic();
+  }
+
+#if !CAPNP_LITE
+  inline ::kj::StringTree toString() const {
+    return ::capnp::_::structString(_reader, *_capnpPrivate::brand());
+  }
+#endif  // !CAPNP_LITE
+
+private:
+  ::capnp::_::StructReader _reader;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::_::PointerHelpers;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::List;
+  friend class ::capnp::MessageBuilder;
+  friend class ::capnp::Orphanage;
+};
+
+class Netput::PushResults::Builder {
+public:
+  typedef PushResults Builds;
+
+  Builder() = delete;  // Deleted to discourage incorrect usage.
+                       // You can explicitly initialize to nullptr instead.
+  inline Builder(decltype(nullptr)) {}
+  inline explicit Builder(::capnp::_::StructBuilder base): _builder(base) {}
+  inline operator Reader() const { return Reader(_builder.asReader()); }
+  inline Reader asReader() const { return *this; }
+
+  inline ::capnp::MessageSize totalSize() const { return asReader().totalSize(); }
+#if !CAPNP_LITE
+  inline ::kj::StringTree toString() const { return asReader().toString(); }
+#endif  // !CAPNP_LITE
+
+private:
+  ::capnp::_::StructBuilder _builder;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::ToDynamic_;
+  friend class ::capnp::Orphanage;
+  template <typename, ::capnp::Kind>
+  friend struct ::capnp::_::PointerHelpers;
+};
+
+#if !CAPNP_LITE
+class Netput::PushResults::Pipeline {
+public:
+  typedef PushResults Pipelines;
+
+  inline Pipeline(decltype(nullptr)): _typeless(nullptr) {}
+  inline explicit Pipeline(::capnp::AnyPointer::Pipeline&& typeless)
+      : _typeless(kj::mv(typeless)) {}
+
 private:
   ::capnp::AnyPointer::Pipeline _typeless;
   friend class ::capnp::PipelineHook;

@@ -33,7 +33,7 @@ static const ::capnp::_::AlignedData<49> b_fa4a1bc90f7e051b = {
      69,   0,   0,   0,   7,   0,   0,   0,
       1,   0,   0,   0,   0,   0,   0,   0,
       9, 162, 235, 121,  59,  28, 224, 176,
-    110, 177, 192, 119,  51, 154,  95, 153,
+    165, 241,   0, 245,  64, 157, 221, 184,
      57,   0,   0,   0,  42,   0,   0,   0,
       0,   0,   0,   0,   0,   0,   0,   0,
       0,   0,   0,   0,   0,   0,   0,   0,
@@ -60,9 +60,9 @@ static const ::capnp::_::AlignedData<49> b_fa4a1bc90f7e051b = {
 #if !CAPNP_LITE
 static const ::capnp::_::RawSchema* const d_fa4a1bc90f7e051b[] = {
   &s_91053e416163d71e,
-  &s_995f9a3377c0b16e,
   &s_afebe44d7bd999ac,
   &s_b0e01c3b79eba209,
+  &s_b8dd9d40f500f1a5,
   &s_cde28ab20dab3120,
   &s_f1c4f972666019a7,
 };
@@ -211,6 +211,32 @@ static const uint16_t i_b0e01c3b79eba209[] = {0};
 const ::capnp::_::RawSchema s_b0e01c3b79eba209 = {
   0xb0e01c3b79eba209, b_b0e01c3b79eba209.words, 32, d_b0e01c3b79eba209, m_b0e01c3b79eba209,
   1, 1, i_b0e01c3b79eba209, nullptr, nullptr, { &s_b0e01c3b79eba209, nullptr, nullptr, 0, 0, nullptr }, false
+};
+#endif  // !CAPNP_LITE
+static const ::capnp::_::AlignedData<17> b_b8dd9d40f500f1a5 = {
+  {   0,   0,   0,   0,   5,   0,   6,   0,
+    165, 241,   0, 245,  64, 157, 221, 184,
+     20,   0,   0,   0,   1,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   7,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+     21,   0,   0,   0,  10,   1,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+      0,   0,   0,   0,   0,   0,   0,   0,
+    110, 101, 116, 112, 117, 116,  46,  99,
+     97, 112, 110, 112,  58,  78, 101, 116,
+    112, 117, 116,  46, 112, 117, 115, 104,
+     36,  82, 101, 115, 117, 108, 116, 115,
+      0,   0,   0,   0,   0,   0,   0,   0, }
+};
+::capnp::word const* const bp_b8dd9d40f500f1a5 = b_b8dd9d40f500f1a5.words;
+#if !CAPNP_LITE
+const ::capnp::_::RawSchema s_b8dd9d40f500f1a5 = {
+  0xb8dd9d40f500f1a5, b_b8dd9d40f500f1a5.words, 17, nullptr, nullptr,
+  0, 0, nullptr, nullptr, nullptr, { &s_b8dd9d40f500f1a5, nullptr, nullptr, 0, 0, nullptr }, false
 };
 #endif  // !CAPNP_LITE
 static const ::capnp::_::AlignedData<33> b_91053e416163d71e = {
@@ -1644,9 +1670,9 @@ Netput::Client::connectRequest(::kj::Maybe< ::capnp::MessageSize> sizeHint) {
       "netput.capnp:Netput", "connect",
       0xfa4a1bc90f7e051bull, 0);
 }
-::capnp::StreamingRequest< ::netput::rpc::Netput::PushParams>
+::capnp::Request< ::netput::rpc::Netput::PushParams,  ::netput::rpc::Netput::PushResults>
 Netput::Client::pushRequest(::kj::Maybe< ::capnp::MessageSize> sizeHint) {
-  return newStreamingCall< ::netput::rpc::Netput::PushParams>(
+  return newCall< ::netput::rpc::Netput::PushParams,  ::netput::rpc::Netput::PushResults>(
       0xfa4a1bc90f7e051bull, 1, sizeHint, {true});
 }
 ::kj::Promise<void> Netput::Server::push(PushContext) {
@@ -1687,11 +1713,9 @@ Netput::Client::disconnectRequest(::kj::Maybe< ::capnp::MessageSize> sizeHint) {
       };
     case 1:
       return {
-        kj::evalNow([&]() {
-          return push(::capnp::Capability::Server::internalGetTypedStreamingContext<
-               ::netput::rpc::Netput::PushParams>(context));
-        }),
-        true,
+        push(::capnp::Capability::Server::internalGetTypedContext<
+             ::netput::rpc::Netput::PushParams,  ::netput::rpc::Netput::PushResults>(context)),
+        false,
         false
       };
     case 2:
@@ -1751,6 +1775,18 @@ constexpr uint16_t Netput::PushParams::_capnpPrivate::pointerCount;
 #if CAPNP_NEED_REDUNDANT_CONSTEXPR_DECL
 constexpr ::capnp::Kind Netput::PushParams::_capnpPrivate::kind;
 constexpr ::capnp::_::RawSchema const* Netput::PushParams::_capnpPrivate::schema;
+#endif  // !CAPNP_NEED_REDUNDANT_CONSTEXPR_DECL
+#endif  // !CAPNP_LITE
+
+// Netput::PushResults
+#if CAPNP_NEED_REDUNDANT_CONSTEXPR_DECL
+constexpr uint16_t Netput::PushResults::_capnpPrivate::dataWordSize;
+constexpr uint16_t Netput::PushResults::_capnpPrivate::pointerCount;
+#endif  // !CAPNP_NEED_REDUNDANT_CONSTEXPR_DECL
+#if !CAPNP_LITE
+#if CAPNP_NEED_REDUNDANT_CONSTEXPR_DECL
+constexpr ::capnp::Kind Netput::PushResults::_capnpPrivate::kind;
+constexpr ::capnp::_::RawSchema const* Netput::PushResults::_capnpPrivate::schema;
 #endif  // !CAPNP_NEED_REDUNDANT_CONSTEXPR_DECL
 #endif  // !CAPNP_LITE
 

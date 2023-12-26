@@ -5,7 +5,7 @@ $Cxx.namespace("netput::rpc");
 
 interface Netput {
     connect @0(request :ConnectRequest) ->(response :ConnectResponse);
-    push @1 (event: Event) -> stream;
+    push @1 (event: Event) -> ();
     disconnect @2 (request :DisconnectRequest) ->(response :DisconnectResponse);
 }
 
