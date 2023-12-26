@@ -3,8 +3,10 @@
 
 #include <capnp/ez-rpc.h>
 #include <capnp/message.h>
+#include <kj/async.h>
 
 #include <functional>
+#include <iostream>
 #include <sstream>
 
 static std::string make_address(const std::string &host, uint16_t port)
@@ -144,7 +146,6 @@ namespace netput
                 {
                     throw std::runtime_error("failed to read response from server");
                 }
-
                 auto response = reader.getResponse();
                 auto message = response.getMessage();
                 if (message.isError())
@@ -268,13 +269,66 @@ namespace netput
             std::string _session_id;
         };
 
-        class server final : public netput::rpc::Netput::Server
+        class service final : public netput::rpc::Netput::Server
         {
         public:
-            server(const std::string &address) : _exit_channel(kj::newPromiseAndFulfiller<void>())
+            service(
+                const std::function<void(const rpc::ConnectRequest::Reader &, rpc::ConnectResponse::Builder &)> &connect_handler,
+                const std::function<void(const rpc::Event::Reader &)> &push_handler,
+                const std::function<void(const rpc::DisconnectRequest::Reader &, rpc::DisconnectResponse::Builder &)> &disconnect_handler) : _connect_handler(connect_handler),
+                                                                                                                                             _push_handler(push_handler),
+                                                                                                                                             _disconnect_handler(disconnect_handler)
             {
-                _rpc_server = std::make_unique<capnp::EzRpcServer>(*reinterpret_cast<capnp::Capability::Client *>(this), address);
-                _exit_channel = kj::newPromiseAndFulfiller<void>();
+            }
+
+            kj::Promise<void> connect(netput::rpc::Netput::Server::ConnectContext context) override
+            {
+                const netput::rpc::ConnectRequest::Reader reader = context.getParams().getRequest();
+                netput::rpc::ConnectResponse::Builder builder = context.getResults().initResponse();
+                _connect_handler(reader, builder);
+                return kj::READY_NOW;
+            }
+
+            kj::Promise<void> push(netput::rpc::Netput::Server::PushContext context) override
+            {
+                const netput::rpc::Event::Reader reader = context.getParams().getEvent();
+                _push_handler(reader);
+                return kj::READY_NOW;
+            }
+
+            kj::Promise<void> disconnect(netput::rpc::Netput::Server::DisconnectContext context) override
+            {
+                const netput::rpc::DisconnectRequest::Reader reader = context.getParams().getRequest();
+                netput::rpc::DisconnectResponse::Builder builder = context.getResults().initResponse();
+                _disconnect_handler(reader, builder);
+                return kj::READY_NOW;
+            }
+
+        private:
+            std::function<void(const rpc::ConnectRequest::Reader &, rpc::ConnectResponse::Builder &)> _connect_handler;
+            std::function<void(const rpc::Event::Reader &)> _push_handler;
+            std::function<void(const rpc::DisconnectRequest::Reader &, rpc::DisconnectResponse::Builder &)> _disconnect_handler;
+        };
+
+        class server
+        {
+        public:
+            server(const std::string &address)
+            {
+                const auto connect_handler = [&](const rpc::ConnectRequest::Reader &reader, rpc::ConnectResponse::Builder &builder)
+                {
+                    this->handle_connect(reader, builder);
+                };
+                const auto push_handler = [&](const rpc::Event::Reader &reader)
+                {
+                    this->handle_push(reader);
+                };
+                const auto disconnect_handler = [&](const rpc::DisconnectRequest::Reader &reader, rpc::DisconnectResponse::Builder &builder)
+                {
+                    this->handle_disconnect(reader, builder);
+                };
+                _rpc_server = std::make_unique<capnp::EzRpcServer>(
+                    kj::heap<service>(connect_handler, push_handler, disconnect_handler), address);
             }
 
             ~server()
@@ -285,51 +339,17 @@ namespace netput
             void serve()
             {
                 kj::WaitScope &wait_scope = _rpc_server->getWaitScope();
-                _active = true;
-                _exit_channel.promise.wait(wait_scope);
+                _promise_fulfiller = kj::heap<kj::PromiseCrossThreadFulfillerPair<void>>(
+                    kj::newPromiseAndCrossThreadFulfiller<void>());
+                _promise_fulfiller->promise.wait(wait_scope);
+                _rpc_server.reset();
             }
 
             void shutdown()
             {
-                if (_active)
-                {
-                    _exit_channel.fulfiller->fulfill();
-                }
+                _promise_fulfiller->fulfiller->fulfill();
             }
 
-            kj::Promise<void> connect(netput::rpc::Netput::Server::ConnectContext context) override
-            {
-                const netput::rpc::ConnectRequest::Reader reader = context.getParams().getRequest();
-                netput::rpc::ConnectResponse::Builder builder = context.getResults().initResponse();
-                handle_connect(reader, builder);
-                return kj::READY_NOW;
-            }
-
-            kj::Promise<void> push(netput::rpc::Netput::Server::PushContext context) override
-            {
-                const netput::rpc::Event::Reader reader = context.getParams().getEvent();
-                handle_push(reader);
-                return kj::READY_NOW;
-            }
-
-            kj::Promise<void> disconnect(netput::rpc::Netput::Server::DisconnectContext context) override
-            {
-                const netput::rpc::DisconnectRequest::Reader reader = context.getParams().getRequest();
-                netput::rpc::DisconnectResponse::Builder builder = context.getResults().initResponse();
-                handle_disconnect(reader, builder);
-                return kj::READY_NOW;
-            }
-
-            // TODO: maybe move these, probably not
-            std::function<std::pair<bool, std::string>(const uint8_t *, size_t)> _connect_handler;
-            std::function<bool(const std::string &)> _disconnect_handler;
-            std::function<void(const std::string &, uint64_t, uint32_t, input_state, bool, uint32_t)> _keyboard_handler;
-            std::function<void(const std::string &, uint64_t, uint32_t, const mouse_button_state_mask &, int32_t, int32_t, int32_t, int32_t)> _mouse_motion_handler;
-            std::function<void(const std::string &, uint64_t, uint32_t, mouse_button, input_state, bool, int32_t, int32_t)> _mouse_button_handler;
-            std::function<void(const std::string &, uint64_t, uint32_t, int32_t, int32_t, float, float)> _mouse_wheel_handler;
-            std::function<void(const std::string &, uint64_t, uint32_t, window_event, int32_t, int32_t)> _window_handler;
-
-        private:
             void handle_connect(
                 const netput::rpc::ConnectRequest::Reader &reader,
                 netput::rpc::ConnectResponse::Builder &builder)
@@ -433,6 +453,16 @@ namespace netput
                 }
             }
 
+            // TODO: maybe move these, probably not
+            std::function<std::pair<bool, std::string>(const uint8_t *, size_t)> _connect_handler;
+            std::function<bool(const std::string &)> _disconnect_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, input_state, bool, uint32_t)> _keyboard_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, const mouse_button_state_mask &, int32_t, int32_t, int32_t, int32_t)> _mouse_motion_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, mouse_button, input_state, bool, int32_t, int32_t)> _mouse_button_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, int32_t, int32_t, float, float)> _mouse_wheel_handler;
+            std::function<void(const std::string &, uint64_t, uint32_t, window_event, int32_t, int32_t)> _window_handler;
+
+        private:
             void handle_mouse_motion(
                 const std::string &session_id,
                 const netput::rpc::MouseMotionEvent::Reader &reader)
@@ -526,8 +556,8 @@ namespace netput
             }
 
             std::unique_ptr<capnp::EzRpcServer> _rpc_server;
-            kj::PromiseFulfillerPair<void> _exit_channel;
             bool _active;
+            kj::Own<kj::PromiseCrossThreadFulfillerPair<void>> _promise_fulfiller;
         };
     }
 

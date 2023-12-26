@@ -7,3 +7,6 @@
 [submodule "vendor/SDL"]
 	path = vendor/SDL
 	url = https://github.com/libsdl-org/SDL
+[submodule "vendor/json11"]
+	path = vendor/json11
+	url = https://github.com/dropbox/json11

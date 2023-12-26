@@ -1,12 +1,17 @@
-#include <netput.hpp>
-#include <SDL.h>
+#include "test.hpp"
 
-int main(int argc, char ** argv)
+int main(int argc, char **argv)
 {
-    SDL_Init(SDL_INIT_EVENTS);
-
-    
-
-    SDL_Quit();
-    return 0;
+    int result;
+    try
+    {
+        result = 0;
+        test::execute();
+    }   
+    catch(const std::exception& error)
+    {
+        result = 1;
+        std::cerr << error.what() << std::endl;
+    } 
+    return result;
 }
