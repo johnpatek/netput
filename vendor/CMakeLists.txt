@@ -1,3 +1,4 @@
+option(BUILD_TESTING "" OFF)
 add_subdirectory(capnproto)
 
 if(NETPUT_TESTS)
