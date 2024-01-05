@@ -2,7 +2,6 @@
 #include "netput.hpp"
 
 #ifdef _WIN32
-#define _CRT_SECURE_NO_WARNINGS
 #pragma comment(lib,"WS2_32.lib")
 #endif
 
