@@ -1,6 +1,11 @@
 #include "netput.capnp.h"
 #include "netput.hpp"
 
+#ifdef _WIN32
+#define _CRT_SECURE_NO_WARNINGS
+#pragma comment(lib,"WS2_32.lib")
+#endif
+
 #include <capnp/ez-rpc.h>
 #include <capnp/message.h>
 #include <kj/async.h>
