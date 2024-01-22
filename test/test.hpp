@@ -50,6 +50,7 @@ namespace test
     const std::string session_ids[] = {
         "ping-session-id",
         "mouse-motion-session-id",
+        "mouse-button-session-id",
         "mouse-wheel-session-id",
         "keyboard-session-id",
         "window-session-id",
@@ -63,7 +64,6 @@ namespace test
     bool connect(std::unique_ptr<netput::client> &client, int usage, const std::string &password);
     void send_event(std::unique_ptr<netput::client> &client, const SDL_Event *event);
     bool disconnect(std::unique_ptr<netput::client> &client);
-
 }
 
 #endif

@@ -181,14 +181,7 @@ namespace netput
                 auto info_builder = builder.initInfo();
                 build_function(info_builder);
                 auto promise = request.send();
-                promise.detach(
-                    [&](const kj::Exception &error)
-                    {
-                        if (_error_handler)
-                        {
-                            _error_handler(error.getDescription());
-                        }
-                    });
+                promise.wait(_rpc_client->getWaitScope());
             }
 
             void send_keyboard(uint64_t timestamp, uint32_t window_id, input_state state, bool repeat, uint32_t key_code)
